@@ -1,0 +1,178 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Things in a City</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
+    <link rel="stylesheet" href="assets/scss/style.css">
+    <link href="assets/css/lib/vector-map/jqvmap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="custom.css">
+    <link rel="stylesheet" href="edit.css">
+
+    <!-- jquery -->
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.js"
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+
+    <!-- firebase -->
+    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-storage.js"></script>
+    <script type="text/javascript" src="firebase.js" ></script>
+
+    <script type="text/javascript" src="edit.js"></script>
+    <script type="text/javascript" src="img.js"></script>
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+
+</head>
+<body>
+
+
+        <!-- Left Panel -->
+
+    <aside id="left-panel" class="left-panel">
+        <nav class="navbar navbar-expand-sm navbar-default">
+
+            <div class="navbar-header">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="./">Things in a City</a>
+                <a class="navbar-brand hidden" href="./"><img src="images/logo2.png" alt="Logo"></a>
+            </div>
+
+            <div id="main-menu" class="main-menu collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="index.html"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
+                    </li>
+                    <h3 class="menu-title">Operations</h3><!-- /.menu-title -->
+                    <li class="">
+                        <a href="add.html"  aria-haspopup="true" > <i class="menu-icon fa fa-plus"></i>Add a Place</a>
+                    </li>
+                    <li class="">
+                        <a href="#"  aria-haspopup="true" > <i class="menu-icon fa fa-edit"></i>Edit a Place</a>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </nav>
+    </aside><!-- /#left-panel -->
+
+    <!-- Left Panel -->
+
+    <!-- Right Panel -->
+
+    <div id="right-panel" class="right-panel">
+
+        <!-- Header-->
+        <header id="header" class="header">
+
+            <div class="header-menu">
+
+                <div class="col-sm-7">
+                    <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
+                    <div class="header-left">
+                        <h3>Dashboard</h3>
+                    </div>
+                </div>
+
+            </div>
+
+        </header><!-- /header -->
+        <!-- Header-->
+
+        <div class="content row">
+            <div  class="col-sm-5">
+                <form id="edit">
+                    <div class="form-group" id="cityselect">
+                        <label for="selectCity">Select a City</label>
+                        <select class="form-control" name="city" id="selectCity" onchange="addPlaces()">
+                            <option>Default select</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="placeselect" >
+                        <label for="selectPlace">Select a Place</label>
+                        <select class="form-control" name="place" id="selectPlace" onchange="editPlace()">
+                            <option>Default select</option>
+                        </select>
+                    </div>
+                </form>
+            </div><br>
+            <div id="editPlace" class="col-sm-7">
+                <h2>Edit the place</h2><br>
+                <form >
+                    <div class="form-group">
+                        <label for="name">NAME</label>
+                        <input type="text" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Enter Name">
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="description">DESCRIPTION</label>
+                        <!-- <input type="text" class="form-control" id="description" placeholder="Password"> -->
+                        <textarea class="form-control" id="description" placeholder="Enter Description" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                            <label for="website">WEBSITE</label>
+                            <input type="text" class="form-control" id="website"  placeholder="Enter Website">
+                            
+                    </div>
+                    <div class="form-group">
+                            <label for="geourl">GEO URL</label>
+                            <input type="text" class="form-control" id="geourl"  placeholder="Geo Url">
+                            
+                    </div>
+                    <div class="form-group">
+                            <label for="category">CATEGORY</label>
+                            <select class="form-control" name="category" id="category">
+                                    <option>Default select</option>
+                                    <option value="coworkingspaces">Co-Working Spaces</option>
+                                    <option value="instagramhotspots">Instagram Hotspots</option>
+                                    <option value="cafes">Cafes</option>
+                            </select>
+                    </div>
+                    <div class="form-group" id="presentImages">
+
+                    </div>
+                    <div class="form-group" id="imagediv">
+                            <label for="images">IMAGES</label>
+                            <input type="file" class="form-control" id="images" multiple>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-lg btn-block" onclick="editThePlace()">SUBMIT</button>
+                </form>
+            </div>
+
+        </div>
+
+        
+    </div><!-- /#right-panel -->
+
+    <!-- Right Panel -->
+
+    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+    <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    
+
+</body>
+</html>
