@@ -4,6 +4,7 @@ var citylist=[];
 var cityplaces=[];
 var cityids=[];
 var allPlacesInACity=[];
+var allPlacesInACityIds=[];
 var citySelected='';
 var placeSelected='';
 var images={
@@ -61,6 +62,7 @@ function addPlaces() {
             cityPlaces.forEach(function(child){
                 places.child(child).once('value',function(snapshot){
                     allPlacesInACity.push(snapshot.val().name);
+                    allPlacesInACityIds.push(child);
                     var app='<div class="alert" id="block" onclick=editPlace("'+ child+'")>'+
                     '<p>'+snapshot.val().name.toUpperCase()+'</p>'+
                     '</div>';
@@ -262,4 +264,19 @@ function deleteThePlace(){
         location.reload();
     });
     
+}
+
+
+function searchPlaces(){
+    $("#selectPlace").empty();
+    const searchVal=$('#search').val();
+    let i=0;
+    allPlacesInACity.forEach(function(child){
+        if(child.includes(searchVal) == true){
+            $("#selectPlace").append('<div class="alert" id="block" onclick=editPlace("'+ allPlacesInACityIds[i]+'")>'+
+            '<p>'+child.toUpperCase()+'</p>'+
+            '</div>');
+        }
+        i++;
+    });
 }
