@@ -1,8 +1,14 @@
+const imageCompressor = new ImageCompressor();
+
 var citylist=[];
 var cityplaces=[];
+var cityids=[];
 var allPlacesInACity=[];
 var citySelected='';
 var placeSelected='';
+var images={
+};
+console.log(images.highres);
 
 $(document).ready(function(){
     cities.once('value',function(snapshot){
@@ -11,6 +17,7 @@ $(document).ready(function(){
 
             var uid=child.key+'/places';
             citylist.push(child.val().title);
+            cityids.push(child.key); 
             var childplaces=[];
             cities.child(uid).once('value',function(snapone){
                 snapone.forEach(function(childone){
@@ -31,7 +38,7 @@ $(document).ready(function(){
         for(var i=0;i<citylist.length;i++){
             // console.log(citylist[i]);
             
-            var app= "<option value="+citylist[i]+">"+citylist[i].toUpperCase()+"</option>";
+            var app= "<option value="+cityids[i]+">"+citylist[i].toUpperCase()+"</option>";
             $('#selectCity').append(app);
         }
         
@@ -39,14 +46,14 @@ $(document).ready(function(){
     
 });
 
-var allPlacesInACity=[];
+
 
 function addPlaces() {
+    allPlacesInACity=[];
     $('#selectPlace').empty();
-    $('#selectPlace').html("<option>Default select</option>");
     var city=$('select[name=city]').val();
     citySelected=city;
-    var cityPlaces = cityplaces[citylist.indexOf(city)];
+    var cityPlaces = cityplaces[cityids.indexOf(city)];
     var t=0;
     
     var getPlaces = function(){
@@ -54,12 +61,14 @@ function addPlaces() {
             cityPlaces.forEach(function(child){
                 places.child(child).once('value',function(snapshot){
                     allPlacesInACity.push(snapshot.val().name);
-                    var app= "<option value="+child+">"+snapshot.val().name.toUpperCase()+"</option>";
+                    var app='<div class="alert" id="block" onclick=editPlace("'+ child+'")>'+
+                    '<p>'+snapshot.val().name.toUpperCase()+'</p>'+
+                    '</div>';
                     $('#selectPlace').append(app);
                 });
                 
             });
-            $('#placeselect').css('display','block');
+            // $('#placeselect').css('display','block');
         });
     };
 
@@ -69,18 +78,26 @@ function addPlaces() {
 }
 
 var formChanged= false;
-var details= ["name","description","url","citycategory","geourl"];
 
 function changetrigger() {
     formChanged=true;
     console.log('form changed');
+    if(($('select[name=category]').val())=='instagramhotspots'){
+        $('#paired').css('display','block');
+    }
+    else{
+        $('#paired').css('display','none');
+    }
 }
 
-function editPlace(){
+function editPlace(place){
     formChanged=false;
-    var place=$('select[name=place]').val();
+    console.log(place);
+    
+    // var place=$('select[name=place]').val();
     placeSelected=place;
     $('#presentImages').empty();
+    // $('#presentImages').append("<label>IMAGES</label><br>");
     console.log(place);
     places.child(place).once('value',function(snapshot){
         var data=snapshot.val();
@@ -88,75 +105,94 @@ function editPlace(){
         console.log(data.description);
         console.log(Object.keys(data.images.lowres));
         var imagesLowRes=[];
-        imagesLowRes[0]=Object.keys(data.images.highres);
-        imagesLowRes[1]=Object.values(data.images.highres);
-        console.log(imagesLowRes);
+        imagesLowRes[0]=Object.keys(data.images.lowres);
+        imagesLowRes[1]=Object.values(data.images.lowres);
+        console.log(data.images);
 
         var imagesHighRes=[];
         imagesHighRes[0]=Object.keys(data.images.highres);
         imagesHighRes[1]=Object.values(data.images.highres);
         console.log(imagesHighRes);
 
-
         $('#name').val(data.name);
         $('#description').val(data.description);
         $('#website').val(data.url);
         $('#geourl').val(data.geourl);
+        $('#geolabel').val(data.geolabel);
         $('#category').val(data.category);
+
+        if(category=='instagramhotspots'){
+            $('#paired').css('display','block');
+            $('#pairedcolor').val(data.pairedcolor); 
+        }
+        else{
+            $('#paired').css('display','none');
+        }
 
         $('#name').attr("onchange","changetrigger()");
         $('#description').attr("onchange","changetrigger()");
         $('#website').attr("onchange","changetrigger()");
-        $('#geourl').attr("onchange","changetrigger()");\
+        $('#geourl').attr("onchange","changetrigger()");
+        $('#geolabel').attr("onchange","changetrigger()");
         $('#category').attr("onchange","changetrigger()");
-        
+        $('#pairedcolor').attr("onchange","changetrigger()");
+
         var presentImages='';
+        console.log((imagesLowRes[0].length));
+        
         for(var i=0;i<(imagesLowRes[0].length);i++)
         {   console.log(i);
+        
             var id='image'+(i+1);
-            var onclk='del("'+id+'")';
-            presentImages+="<label>IMAGE "+(i+1)+"</label>";
+            var onclk='del("'+id+'","'+imagesLowRes[0][i]+' '+imagesHighRes[0][i]+' '+place+'")';
+            presentImages+="<div class=''>";
+            // presentImages+="<label>IMAGE "+(i+1)+"</label>";
             presentImages+='<img src='+imagesLowRes[1][i]+' width="42" class="form-control" id="'+id+'" >';
-            presentImages+="<button type='button' onclick='"+onclk+"' class='btn btn-primary'>Delete</button><br>";
+            presentImages+="<button type='button' onclick='"+onclk+"' class='btn btn-primary'>Delete</button></div>";
             $('#presentImages').append(presentImages);
-
             // $('#image'+(i+1)).val(imagesLowRes[1][i]);
         }
 
         // $("#editPlace").css('display','inline-block');
+        console.log(images);
+        
     });
 
 }
 
+var details= ["name","description","url","citycategory","geourl","geolabel"];
 
 function editThePlace() {
 
     if(formChanged){
-        var name,description,website,geourl,category,city,images;
+        details= ["name","description","url","citycategory","geourl","geolabel"];
+        var name,description,website,geourl,category,city,images,geolabel,pairedcolor;
         name=$('#name').val();
         description=$('#description').val();
         website=$('#website').val();
         geourl=$('#geourl').val();
+        geolabel=$('#geolabel').val();
         category=$('select[name=category]').val();
         city=$('#city').val();
         images=document.getElementById('images').files;
         var citycategory=city+'_'+category;
+        
 
         var newData ={
             category:category,
-            // city:city,
             citycategory: citycategory,
             description:description,
             geourl:geourl,
+            geolabel:geolabel,
             name:name,
-            url:website
+            url:website,
         };
 
-        // firebase.database().ref('users/' + userId).set({
-        //     username: name,
-        //     email: email,
-        //     profile_picture : imageUrl
-        //   });
+        if(category=='instagramhotspots'){
+            pairedcolor=$('#pairedcolor').val();            
+            newData["pairedcolor"]=pairedcolor;
+            details.push("pairedcolor");
+        }
 
         for(var i=0;i<details.length;i++){
             places.child(placeSelected+"/"+details[i]).set(newData[details[i]]);
@@ -182,13 +218,48 @@ function editThePlace() {
 }
 
 
-function del(link){
+function del(link,detail){
     var image=$("img[id="+link+"]").attr('src');
-    console.log(image);
-    desertRef.delete().then(function() {
-        // File deleted successfully
-      }).catch(function(error) {
-        // Uh-oh, an error occurred!
-      });
+
+    console.log(detail);
+    var detailArray=detail.split(" ");
+    console.log(detailArray);
+    
+    places.child(detailArray[2]+"/images/highres/"+detailArray[1]).remove(); 
+    places.child(detailArray[2]+"/images/lowres/"+detailArray[0]).remove(); 
+
+    // desertRef.delete().then(function() {
+    //     // File deleted successfully
+    //   }).catch(function(error) {
+    //     // Uh-oh, an error occurred!
+    //   });
+    
+}
+
+
+function deleteThePlace(){
+    console.log(citySelected);
+    console.log(placeSelected);
+    // delete place
+    places.child(placeSelected).remove(); 
+
+
+    var delFromCity = function(){
+        return new Promise(function(resolve, reject){
+            cities.child(citySelected+'/places/').once('value',function(snapshot){
+                snapshot.forEach(function(child){
+                    if(child.val()==placeSelected){
+                        console.log(child.val());
+                        cities.child(citySelected+'/places/'+child.key).remove();
+                    }
+                });
+            });
+        });
+    };
+
+    
+    delFromCity().then(function(){
+        location.reload();
+    });
     
 }

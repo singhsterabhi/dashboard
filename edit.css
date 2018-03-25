@@ -6,7 +6,6 @@
     background: #fff;
     padding: 40px 30px  ;
     display: inline-block!important;
-    
 }
 
 #edit{
@@ -21,4 +20,45 @@
 
 #edit select{
     width: 100%!important;
+}
+
+#placelist{
+    width: 93%;
+}
+
+#selectPlace{
+    width: 108%;
+    min-height: 300px;
+    max-height: 500px;
+    background: #ddd;
+    overflow-y: auto;
+    border-radius: 6px;
+    padding: 10px 5px;
+}
+
+#block{
+    background: white;
+    margin-bottom: 2px;
+    height: 35px;
+    line-height: 35px;
+    /* text-align: center; */
+    cursor: pointer;
+}
+
+#block p{
+    margin-left: 12px;
+    font-size: 18px;
+    margin-bottom: 0;
+    margin-top: -5px;
+    color: #555;
+}
+
+#presentImages{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#presentImages div{
+    margin-right: 20px;
+    margin-bottom: 20px;
 }
