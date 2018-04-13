@@ -10,6 +10,33 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- jquery -->
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.js"
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+
+    <!-- firebase -->
+    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-storage.js"></script>
+    <script type="text/javascript" src="firebase.js" ></script>
+
+    <script type="text/javascript">
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+            console.log('logged in', user.uid);
+            window.location = "/add.html";
+            } else {
+            // User is signed out.
+            // ...
+            console.log('logged out');
+            }
+        });
+    </script>
+
     <link rel="stylesheet" href="assets/css/normalize.css">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
@@ -20,52 +47,16 @@
     <link rel="stylesheet" href="assets/scss/style.css">
     <link href="assets/css/lib/vector-map/jqvmap.min.css" rel="stylesheet">
 
-    <!-- firebase -->
-    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-storage.js"></script>
-    <script type="text/javascript" src="firebase.js" ></script>
+
+    <script type="text/javascript" src="index.js"></script>
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="index.css">
 
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
 </head>
 <body>
-
-
-        <!-- Left Panel -->
-
-    <aside id="left-panel" class="left-panel">
-        <nav class="navbar navbar-expand-sm navbar-default">
-
-            <div class="navbar-header">
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fa fa-bars"></i>
-                </button>
-                <a class="navbar-brand" href="./">Things in a City</a>
-                <a class="navbar-brand hidden" href="./"><img src="images/logo2.png" alt="Logo"></a>
-            </div>
-
-            <div id="main-menu" class="main-menu collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active">
-                        <a href="index.html"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
-                    </li>
-                    <h3 class="menu-title">Operations</h3><!-- /.menu-title -->
-                    <li class="">
-                        <a href="add.html"  aria-haspopup="true" > <i class="menu-icon fa fa-plus"></i>Add a Place</a>
-                    </li>
-                    <li class="">
-                        <a href="edit.html"  aria-haspopup="true" > <i class="menu-icon fa fa-edit"></i>Edit a Place</a>
-                    </li>
-                </ul>
-            </div><!-- /.navbar-collapse -->
-        </nav>
-    </aside><!-- /#left-panel -->
-
-    <!-- Left Panel -->
 
     <!-- Right Panel -->
 
@@ -73,24 +64,58 @@
 
         <!-- Header-->
         <header id="header" class="header">
-
-            <div class="header-menu">
-
-                <div class="col-sm-7">
-                    <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
-                    <div class="header-left">
-                        <h3>Dashboard</h3>
-                    </div>
-                </div>
-
-                <!--  -->
+            <div class="" style="text-align:center;">
+                <h3><a href="/">Dashboard</a></h3>
             </div>
-
-        </header><!-- /header -->
+        </header>
         <!-- Header-->
 
-        
-    </div><!-- /#right-panel -->
+        <!-- Body -->
+        <div id="container">
+            <div class=" text-center col-sm-6 offset-sm-3" id="authdialog">
+                <div class="card-header">
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active col-sm-6" id="nav-login-tab" data-toggle="tab" href="#nav-login" role="tab" aria-controls="nav-login" aria-selected="true">LOGIN</a>
+                        <a class="nav-item nav-link  col-sm-6" id="nav-signup-tab" data-toggle="tab" href="#nav-signup" role="tab" aria-controls="nav-signup" aria-selected="false">SIGN UP</a>
+                    </div>
+                    <div class="tab-content">
+                    <div class="tab-pane fade show active" id="nav-login" role="tabpanel" aria-labelledby="nav-login-tab">
+                        <form>
+                            <div class="form-group">
+                                <label for="loginEmail">Email address</label>
+                                <input type="email" class="form-control" id="loginEmail" placeholder="Enter email">
+                            </div>
+                            <div class="form-group">
+                                <label for="loginPassword">Password</label>
+                                <input type="password" class="form-control" id="loginPassword" placeholder="Password">
+                            </div>
+                            <div id="loginError"></div>
+                            <button type="button" class="btn btn-primary" onclick="login()">LOGIN</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="nav-signup" role="tabpanel" aria-labelledby="nav-signup-tab">
+                        <form>
+                            <div class="form-group">
+                                <label for="signUpEmail">Email address</label>
+                                <input type="email" class="form-control" id="signUpEmail" aria-describedby="emailHelp" placeholder="Enter email">
+                                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="signUpPassword">Password</label>
+                                <input type="password" class="form-control" id="signUpPassword" aria-describedby="passHelp" placeholder="Password">
+                                <small id="passHelp" class="form-text text-muted">Password should be at least 6 characters long</small>
+                            </div>
+                            <div id="signUpError"></div>
+                            <button type="button" class="btn btn-primary" onclick="signup()">SIGN UP</button>
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Body -->
+    </div>
 
     <!-- Right Panel -->
 
@@ -98,7 +123,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
-
+    <script>
+        $('#login').on('click', function () {
+            $('#loginModal').modal();
+        });
+    </script>
     
 
 </body>

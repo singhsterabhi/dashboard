@@ -1,31 +1,32 @@
-#right-panel{
+#right-panel {
     /* text-align: center; */
     background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
 }
 
-.content{
+.content {
     width: 80%;
     /* display: block; */
     margin: 20px 10%;
     /* width: 70%!important; */
     background: #fff;
-    padding: 40px 70px  ;
+    padding: 40px 70px;
 }
 
-input, select, textarea{
-    background-color: #ddd!important;
+input,
+select,
+textarea {
+    background-color: #ddd !important;
 }
 
-.content button{
+.content button {
     margin-top: 20px;
 }
 
-
-form img{
-    width: 100px!important;
-    height: 100px!important;
+form img {
+    width: 100px !important;
+    height: 100px !important;
 }
 
-#presentimages{
+#presentimages {
     display: inline-flex;
 }

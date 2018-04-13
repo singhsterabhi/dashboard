@@ -1,32 +1,32 @@
-.content{
+.content {
     width: 90%;
     /* display: block; */
     margin: 20px 5%;
     /* width: 70%!important; */
     background: #fff;
-    padding: 40px 30px  ;
-    display: inline-block!important;
+    padding: 40px 30px;
+    display: inline-block !important;
 }
 
-#edit{
+#edit {
     /* margin: 0; */
     /* display: inline-block!important; */
     border-right: 2px #333;
 }
 
-#editPlace{
-    display: inline-block!important;
+#editPlace {
+    display: inline-block !important;
 }
 
-#edit select{
-    width: 100%!important;
+#edit select {
+    width: 100% !important;
 }
 
-#placelist{
+#placelist {
     width: 93%;
 }
 
-#selectPlace{
+#selectPlace {
     width: 108%;
     min-height: 300px;
     max-height: 500px;
@@ -36,7 +36,7 @@
     padding: 10px 5px;
 }
 
-#block{
+#block {
     background: white;
     margin-bottom: 2px;
     height: 35px;
@@ -45,7 +45,7 @@
     cursor: pointer;
 }
 
-#block p{
+#block p {
     margin-left: 12px;
     font-size: 18px;
     margin-bottom: 0;
@@ -53,12 +53,12 @@
     color: #555;
 }
 
-#presentImages{
+#presentImages {
     display: flex;
     flex-wrap: wrap;
 }
 
-#presentImages div{
+#presentImages div {
     margin-right: 20px;
     margin-bottom: 20px;
 }

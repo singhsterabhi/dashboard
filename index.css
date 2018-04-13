@@ -1,0 +1,13 @@
+#authdialog{
+    margin-top: 50px;
+}
+
+.tab-pane{
+    background: white;
+    padding: 30px 60px;
+    text-align: left;
+}
+
+#signUpError p,#loginError p{
+    color: red;
+}
