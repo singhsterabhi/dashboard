@@ -13,64 +13,116 @@ function cat() {
     }
 }
 
-
-FileList.prototype.forEach = function (callback) {
-    [].forEach.call(this, callback)
-};
-
 function addAPlace() {
 
-    var name, description, website, geourl, category, city, images, pairedcolor, geolabel;
-    name = $('#name').val();
-    description = $('#description').val();
-    website = $('#website').val();
-    geourl = $('#geourl').val();
-    geolabel = $('#geolabel').val();
-    category = $('select[name=category]').val();
-    city = $('#city').val();
-    images = document.getElementById('images').files;
-    var citycategory = city + '_' + category;
+    let promise = new Promise(function (resolve, reject) {
+        var name, description, website, geourl, category, city, images, pairedcolor, geolabel;
+        name = $('#name').val();
+        description = $('#description').val();
+        website = $('#website').val();
+        geourl = $('#geourl').val();
+        geolabel = $('#geolabel').val();
+        category = $('select[name=category]').val();
+        city = $('#city').val();
+        images = document.getElementById('images').files;
+        var citycategory = city + '_' + category;
 
-    // console.log(images.name);
-    // console.log(geolabel);
-
-    var data = {
-        user: uid,
-        category: category,
-        city: city,
-        citycategory: citycategory,
-        description: description,
-        geourl: geourl,
-        geolabel: geolabel,
-        name: name,
-        url: website,
-        approved: false
-    };
+        var data = {
+            user: uid,
+            category: category,
+            city: city,
+            citycategory: citycategory,
+            description: description,
+            geourl: geourl,
+            geolabel: geolabel,
+            name: name,
+            url: website,
+            approved: false
+        };
 
 
-    if (category == 'instagramhotspots') {
-        pairedcolor = $('#pairedcolor').val();
-        data[pairedcolor] = pairedcolor;
-    }
+        if (category == 'instagramhotspots') {
+            pairedcolor = $('#pairedcolor').val();
+            data[pairedcolor] = pairedcolor;
+        }
 
-    // console.log(data);
+        // console.log(data);
+        var i = 0;
+        var pushedPlace = placesNotApproved.push().key;
+        placesNotApproved.child(pushedPlace).update(data)
+            .then(function () {
 
-    var pushedPlace = placesNotApproved.push(data);
 
-    var i = 0;
-    images.forEach(element => {
-        // console.log(element);
-        var imgFile = images[i];
-        i++;
-        imageCompressor.compress(imgFile, 0.6)
-            .then(function (result) {
-                uploadImageAsPromise(result, pushedPlace.key, i, false);
-                uploadImageAsPromise(imgFile, pushedPlace.key, i, true);
+                function forEachPromise(items, fn) {
+                    return Array.from(items).reduce(function (promise, item) {
+                        return promise.then(function () {
+                            return fn(item);
+                        });
+                    }, Promise.resolve());
+                }
+
+
+                function logItem(element) {
+                    return new Promise((resolve, reject) => {
+                        // console.log(element);
+                        var imgFile = images[i];
+                        var name = uuidv4();
+                        i++;
+                        imageCompressor.compress(imgFile, 0.6)
+                            .then(function (result) {
+                                return uploadImageAsPromise(result, pushedPlace, i, false, name);
+                            })
+                            .then(() => {
+                                return uploadImageAsPromise(imgFile, pushedPlace, i, true, name);
+                            })
+                            .then(() => {
+                                resolve();
+                            })
+                            .catch((err) => {
+                                // Handle the error
+                                console.log(`Error ${err}`);
+                            });
+                        // resolve(compress);
+                    });
+                }
+
+
+                return forEachPromise(images, logItem).then(() => {
+                    console.log('all images done');
+                });
 
             })
-            .catch((err) => {
-                // Handle the error
+            .then(function () {
+                console.log('Place Successfully Added');
+                reset();
+                resolve('Place Successfully Added');
+            }).catch((err) => {
+                console.log(err);
             });
     });
 
+    promise.then(function (val) {
+        alert(val);
+    }).catch(function (err) {
+        alert(err);
+    });
+}
+
+function reset() {
+    $('#name').val('');
+    $('#description').val('');
+    $('#website').val('');
+    $('#geourl').val('');
+    $('#geolabel').val('');
+    $('#category').val('default');
+    $('#images').val('');
+    $('#city').val('');
+    $('#paired').val('');
+    $('#paired').css('display', 'none');
+}
+
+function uuidv4() {
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
 }
