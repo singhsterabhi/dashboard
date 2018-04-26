@@ -46,6 +46,8 @@
     <!-- <script type="text/javascript" src="img.js"></script> -->
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
 
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
@@ -132,12 +134,12 @@
         <div class="content row">
             <div class="col-sm-5">
                 <form id="edit">
-                    <div class="form-group" id="cityselect">
+                    <!-- <div class="form-group" id="cityselect">
                         <label for="selectCity">Select a City</label>
                         <select class="form-control" name="city" id="selectCity" onchange="addPlaces()">
                             <option>Default select</option>
                         </select>
-                    </div>
+                    </div> -->
                     <!-- <div class="form-group" id="placeselect" >
                         <label for="selectPlace">Select a Place</label>
                         <select class="form-control" name="place" id="selectPlace" onchange="editPlace()">
@@ -163,32 +165,32 @@
                 <form>
                     <div class="form-group">
                         <label for="name">NAME</label>
-                        <input type="text" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Enter Name">
+                        <input type="text" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Enter Name" onchange="changetrigger()">
 
                     </div>
                     <div class="form-group">
                         <label for="description">DESCRIPTION</label>
                         <!-- <input type="text" class="form-control" id="description" placeholder="Password"> -->
-                        <textarea class="form-control" id="description" placeholder="Enter Description" rows="2"></textarea>
+                        <textarea class="form-control" id="description" placeholder="Enter Description" rows="2" onchange="changetrigger()"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="website">WEBSITE</label>
-                        <input type="text" class="form-control" id="website" placeholder="Enter Website">
+                        <input type="text" class="form-control" id="website" placeholder="Enter Website" onchange="changetrigger()">
 
                     </div>
                     <div class="form-group">
                         <label for="geourl">GEO URL</label>
-                        <input type="text" class="form-control" id="geourl" placeholder="Geo Url">
+                        <input type="text" class="form-control" id="geourl" placeholder="Geo Url" onchange="changetrigger()">
 
                     </div>
                     <div class="form-group">
                         <label for="geolabel">GEO LABEL</label>
-                        <input type="text" class="form-control" id="geolabel" placeholder="Geo Label">
+                        <input type="text" class="form-control" id="geolabel" placeholder="Geo Label" onchange="changetrigger()">
 
                     </div>
                     <div class="form-group">
                         <label for="category">CATEGORY</label>
-                        <select class="form-control" name="category" id="category">
+                        <select class="form-control" name="category" id="category" onchange="changetrigger()">
                             <option>Default select</option>
                             <option value="coworkingspaces">Co-Working Spaces</option>
                             <option value="instagramhotspots">Instagram Hotspots</option>
@@ -197,7 +199,11 @@
                     </div>
                     <div class="form-group" style="display:none;" id="paired">
                         <label for="pairedcolor">PAIRED COLOUR</label>
-                        <input type="text" class="form-control" id="pairedcolor" placeholder="Paired Colour">
+                        <input type="text" class="form-control" id="pairedcolor" placeholder="Paired Colour" onchange="changetrigger()">
+                    </div>
+                    <div class="form-group">
+                        <label for="city">CITY</label>
+                        <input type="text" class="form-control" id="city" placeholder="Enter City" disabled>
                     </div>
                     <label>IMAGES</label>
                     <div id="presentImages">
@@ -205,16 +211,25 @@
                     </div>
                     <div class="form-group" id="imagediv">
                         <label for="images">ADD IMAGES</label>
-                        <input type="file" class="form-control" id="images" multiple>
+                        <input type="file" class="form-control" id="images" multiple onchange="changetrigger()">
                     </div>
-                    <button type="button" class="btn btn-primary " onclick="editThePlace()">SUBMIT</button>
-                    <button type="button" class="btn btn-danger " onclick="deleteThePlace()">DELETE THE PLACE</button>
+                    <div id="loader" style="display: none; text-align: center;">
+                        <img src="loader.gif" alt="" style="width: 200px!important;height:60px!important;">
+                    </div>
+                    <button type="button" class="btn btn-primary " onclick="editThePlace()" id="submit">SUBMIT</button>
+                    <button type="button" class="btn btn-danger " onclick="deleteThePlace()" id="submit">DELETE THE PLACE</button>
                 </form>
             </div>
-
         </div>
-
-
+    </div>
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"
+        id="imageModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="text-align: center;">
+                <p>Image</p>
+                <img id="largeImage" src="" alt="">
+            </div>
+        </div>
     </div>
     <!-- /#right-panel -->
 

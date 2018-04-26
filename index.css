@@ -11,3 +11,10 @@
 #signUpError p,#loginError p{
     color: red;
 }
+
+
+#facebook{
+    background-color: #3b5998;
+    /* width: 80%; */
+    margin-top: 20px;
+}

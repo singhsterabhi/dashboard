@@ -1,4 +1,4 @@
-function uploadImageAsPromise(imageFile, pushedPlaceKey, i, highRes,name) {
+function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes,name) {
     return new Promise(function (resolve, reject) {
         var storageRef;
         

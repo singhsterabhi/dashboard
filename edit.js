@@ -1,111 +1,149 @@
 const imageCompressor = new ImageCompressor();
 
-var citylist = [];
-var cityplaces = [];
-var cityids = [];
-var allPlacesInACity = [];
-var allPlacesInACityIds = [];
-var citySelected = '';
-var placeSelected = '';
-var images = {};
-var formChanged = false;
-
-
-auth.onAuthStateChanged(function (user) {
-    if (user) {
-        if (user.uid != "g8AntULTJcWcqTSbS3gSMoBslHw2") {
-            $('.approve').remove();
-        } else {
-            $('.approve').css('display', 'block');
-        }
-        console.log('logged in', user.uid);
-        uid = user.uid;
-        $('#logout').attr('title', user.email);
-    } else {
-        // User is signed out.
-        // ...
-        console.log('logged out');
-        window.location = "/";
-    }
-});
+let allPlaces = {};
+let place = [];
+let placesid = [];
+let selectedPlace;
+let selectedCity;
+let images = {};
+let formChanged = false;
 
 
 FileList.prototype.forEach = function (callback) {
     [].forEach.call(this, callback)
 };
 
+// cities.orderByChild("title").equalTo(city);
+
+
 $(document).ready(function () {
-    cities.once('value', function (snapshot) {
-
-        snapshot.forEach(function (child) {
-
-            var uid = child.key + '/places';
-            citylist.push(child.val().title);
-            cityids.push(child.key);
-            var childplaces = [];
-            cities.child(uid).once('value', function (snapone) {
-                snapone.forEach(function (childone) {
-                    // console.log(childone.val());
-                    childplaces.push(childone.val());
-                });
-            });
-            var city = child.val().title;
-
-            cityplaces.push(childplaces);
-
+    let authentication = new Promise((resolve, reject) => {
+        auth.onAuthStateChanged(function (user) {
+            if (user) {
+                if (user.uid != "g8AntULTJcWcqTSbS3gSMoBslHw2") {
+                    $('.approve').remove();
+                } else {
+                    $('.approve').css('display', 'block');
+                }
+                console.log('logged in', user.uid);
+                uid = user.uid;
+                $('#logout').attr('title', user.email);
+                resolve();
+            } else {
+                // User is signed out.
+                // ...
+                console.log('logged out');
+                window.location = "/";
+            }
         });
-        // console.log(citylist);
+    });
 
-        // console.log(citylist.length);
-        // console.log(cityplaces);
+    authentication.then(() => {
+        console.log(uid);
+        placesNotApproved.orderByChild("user").equalTo(uid).once('value', function (snapshot) {
 
-        for (var i = 0; i < citylist.length; i++) {
-            // console.log(citylist[i]);
+            snapshot.forEach(function (child) {
+                console.log(child);
 
-            var app = "<option value=" + cityids[i] + ">" + citylist[i].toUpperCase() + "</option>";
-            $('#selectCity').append(app);
-        }
+                allPlaces[child.key] = child.val();
+                place.push(child.val().name);
+                placesid.push(child.key);
 
+                var app = '<div class="alert ' + child.key + '" id="block" onclick=openPlace("' + child.key + '")>' +
+                    '<p>' + child.val().name.toUpperCase() + '</p>' +
+                    '</div>';
+                $('#selectPlace').append(app);
+            });
+        });
+
+    }).catch(function (err) {
+        alert(err);
     });
 
 });
 
 
+function openPlace(arg) {
+    formChanged = false;
+    console.log(arg);
+    selectedPlace = arg;
+    let data = allPlaces[selectedPlace];
+    selectedCity = data.city;
+    $('#name').val(data.name);
+    $('#description').val(data.description);
+    $('#website').val(data.url);
+    $('#city').val(data.city);
+    $('#geourl').val(data.geourl);
+    $('#geolabel').val(data.geolabel);
+    $('#category').val(data.category);
 
-function addPlaces() {
-    allPlacesInACity = [];
-    $('#selectPlace').empty();
-    var city = $('select[name=city]').val();
-    citySelected = city;
-    var cityPlaces = cityplaces[cityids.indexOf(city)];
-    var t = 0;
+    if (category == 'instagramhotspots') {
+        $('#paired').css('display', 'block');
+        $('#pairedcolor').val(data.pairedcolor);
+    } else {
+        $('#paired').css('display', 'none');
+    }
+    console.log(Object.keys(data.images.lowres).length);
+    $('#presentImages').empty();
+    let presentImages = "";
+    let i = 0;
 
-    var getPlaces = function () {
-        return new Promise(function (resolve, reject) {
-            cityPlaces.forEach(function (child) {
-                places.child(child).once('value', function (snapshot) {
-
-                    if (snapshot.val().user == uid) {
-                        allPlacesInACity.push(snapshot.val().name);
-                        allPlacesInACityIds.push(child);
-                        var app = '<div class="alert" id="block" onclick=editPlace("' + child + '")>' +
-                            '<p>' + snapshot.val().name.toUpperCase() + '</p>' +
-                            '</div>';
-                        $('#selectPlace').append(app);
-                    }
-
-                });
-
+    function forEachPromise(items, fn) {
+        return items.reduce(function (promise, item) {
+            return promise.then(function () {
+                return fn(item);
             });
-            // $('#placeselect').css('display','block');
+        }, Promise.resolve());
+    }
+
+
+    function logItem(key) {
+        return new Promise((resolve, reject) => {
+            console.log(key);
+            console.log(data.images.lowres[key]);
+            console.log(data.images.lowres[key].name);
+            let highresKey;
+            let highresFun = new Promise((resolve, reject) => {
+                return placesNotApproved.child(selectedPlace + '/images/highres').orderByChild("name").equalTo(data.images.lowres[key].name).once('value', (snapshot) => {
+                    snapshot.forEach((child) => {
+                        highresKey = child.key;
+                        resolve();
+                    });
+                });
+            });
+
+            highresFun.then(() => {
+                console.log(highresKey);
+                let id = 'image' + (i + 1);
+                let onclk = `del('${id} ${data.images.lowres[key].name} ${key} ${highresKey}')`;
+                presentImages += '<div id="' + id + '" >' +
+                    '<img src=' + data.images.lowres[key].url + ' width="42" class="form-control" data-toggle="modal" data-target=".bd-example-modal-lg" data-whatever="' + data.images.highres[highresKey].url + '">' +
+                    '<button type="button" onclick="' + onclk + '" class="btn btn-primary">Delete</button></div>';
+                i++;
+                resolve();
+            });
         });
-    };
+    }
 
-    getPlaces();
-
+    forEachPromise(Object.keys(data.images.lowres), logItem).then(() => {
+        console.log('all images done');
+        $('#presentImages').append(presentImages);
+    });
 }
 
+$(document).ready(function () {
+    $('.bd-example-modal-lg').on('show.bs.modal', function (event) {
+        console.log('hiii');
 
+        let image = $(event.relatedTarget); // Button that triggered the modal
+        let url = image.data('whatever'); // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        let modal = $(this);
+        console.log(url);
+        $('#largeImage').attr('src', url);
+    });
+});
 
 function changetrigger() {
     formChanged = true;
@@ -117,208 +155,183 @@ function changetrigger() {
     }
 }
 
-function editPlace(place) {
-    formChanged = false;
-    console.log(place);
 
-    // var place=$('select[name=place]').val();
-    placeSelected = place;
-    $('#presentImages').empty();
-    // $('#presentImages').append("<label>IMAGES</label><br>");
-    console.log(place);
-    places.child(place).once('value', function (snapshot) {
-        var data = snapshot.val();
-
-
-        $('#name').val(data.name);
-        $('#description').val(data.description);
-        $('#website').val(data.url);
-        $('#geourl').val(data.geourl);
-        $('#geolabel').val(data.geolabel);
-        $('#category').val(data.category);
-
-        if (category == 'instagramhotspots') {
-            $('#paired').css('display', 'block');
-            $('#pairedcolor').val(data.pairedcolor);
-        } else {
-            $('#paired').css('display', 'none');
-        }
-
-        $('#name').attr("onchange", "changetrigger()");
-        $('#description').attr("onchange", "changetrigger()");
-        $('#website').attr("onchange", "changetrigger()");
-        $('#geourl').attr("onchange", "changetrigger()");
-        $('#geolabel').attr("onchange", "changetrigger()");
-        $('#category').attr("onchange", "changetrigger()");
-        $('#pairedcolor').attr("onchange", "changetrigger()");
-        $('#images').attr("onchange", "changetrigger()");
-
-        console.log(data.name);
-        console.log(data.description);
-
-        if (data.images != undefined) {
-            console.log(Object.keys(data.images.lowres));
-            var imagesLowRes = [];
-            imagesLowRes[0] = Object.keys(data.images.lowres);
-            imagesLowRes[1] = Object.values(data.images.lowres);
-            console.log(data.images);
-
-            var imagesHighRes = [];
-            imagesHighRes[0] = Object.keys(data.images.highres);
-            imagesHighRes[1] = Object.values(data.images.highres);
-            console.log(imagesHighRes);
-
-
-            var presentImages = '';
-            console.log((imagesLowRes[0].length));
-
-            for (var i = 0; i < (imagesLowRes[0].length); i++) {
-                console.log(i);
-
-                var id = 'image' + (i + 1);
-                var onclk = 'del("' + id + '","' + imagesLowRes[0][i] + ' ' + imagesLowRes[1][i].name + ' ' + imagesHighRes[0][i] + ' ' + imagesHighRes[1][i].name + ' ' + place + '")';
-                presentImages += '<div id="' + id + '" >';
-                // presentImages+="<label>IMAGE "+(i+1)+"</label>";
-                presentImages += '<img src=' + imagesLowRes[1][i].url + ' width="42" class="form-control" >';
-                presentImages += "<button type='button' onclick='" + onclk + "' class='btn btn-primary'>Delete</button></div>";
-
-                // $('#image'+(i+1)).val(imagesLowRes[1][i]);
-            }
-            $('#presentImages').append(presentImages);
-            // $("#editPlace").css('display','inline-block');
-            console.log(images);
-        }
-    });
-
-}
-
-var details = ["name", "description", "url", "citycategory", "geourl", "geolabel"];
+let details = ["name", "description", "url", "citycategory", "geourl", "geolabel"];
 
 function editThePlace() {
-
-    if (formChanged) {
-        details = ["name", "description", "url", "citycategory", "geourl", "geolabel"];
-        var name, description, website, geourl, category, city, images, geolabel, pairedcolor;
-        name = $('#name').val();
-        description = $('#description').val();
-        website = $('#website').val();
-        geourl = $('#geourl').val();
-        geolabel = $('#geolabel').val();
-        category = $('select[name=category]').val();
-        city = $('#city').val();
-        images = document.getElementById('images').files;
-        var citycategory = city + '_' + category;
-
-
-        var newData = {
-            category: category,
-            citycategory: citycategory,
-            description: description,
-            geourl: geourl,
-            geolabel: geolabel,
-            name: name,
-            url: website,
-        };
-
-        if (category == 'instagramhotspots') {
-            pairedcolor = $('#pairedcolor').val();
-            newData["pairedcolor"] = pairedcolor;
-            details.push("pairedcolor");
-        }
-
-        for (var i = 0; i < details.length; i++) {
-            places.child(placeSelected + "/" + details[i]).set(newData[details[i]]);
-        }
+    let promise = new Promise(function (resolve, reject) {
+        $('#submit').attr('disabled','');
+        $('#loader').css('display','block');
+        if (formChanged) {
+            details = ["name", "description", "url", "citycategory", "geourl", "geolabel"];
+            let name, description, website, geourl, category, city, images, geolabel, pairedcolor;
+            name = $('#name').val();
+            description = $('#description').val();
+            website = $('#website').val();
+            geourl = $('#geourl').val();
+            geolabel = $('#geolabel').val();
+            category = $('select[name=category]').val();
+            city = $('#city').val();
+            images = document.getElementById('images').files;
+            let citycategory = city + '_' + category;
 
 
-        var i = 0;
-        images.forEach(element => {
-            // console.log(element);
-            var imgFile = images[i];
-            i++;
-            imageCompressor.compress(imgFile, 0.6)
-                .then(function (result) {
-                    uploadImageAsPromise(result, placeSelected, i, false);
-                    uploadImageAsPromise(imgFile, placeSelected, i, true);
+            let newData = {
+                category: category,
+                citycategory: citycategory,
+                description: description,
+                geourl: geourl,
+                geolabel: geolabel,
+                name: name,
+                url: website,
+            };
 
-                })
-                .catch((err) => {
-                    // Handle the error
+            if (category == 'instagramhotspots') {
+                pairedcolor = $('#pairedcolor').val();
+                newData["pairedcolor"] = pairedcolor;
+                details.push("pairedcolor");
+            }
+
+            for (let i = 0; i < details.length; i++) {
+                placesNotApproved.child(selectedPlace + "/" + details[i]).set(newData[details[i]]);
+            }
+            let i = 0;
+            placesNotApproved.child(selectedPlace + '/approved').set(false).then(() => {
+                function forEachPromise(items, fn) {
+                    return Array.from(items).reduce(function (promise, item) {
+                        return promise.then(function () {
+                            return fn(item);
+                        });
+                    }, Promise.resolve());
+                }
+
+                function logItem(element) {
+                    return new Promise((resolve, reject) => {
+                        // console.log(element);
+                        var imgFile = images[i];
+                        var name = uuidv4();
+                        i++;
+                        imageCompressor.compress(imgFile, 0.2)
+                            .then(function (result) {
+                                return uploadImageAsPromise(result, selectedPlace, false, name);
+                            })
+                            .then(() => {
+                                return uploadImageAsPromise(imgFile, selectedPlace, true, name);
+                            })
+                            .then(() => {
+                                resolve();
+                            })
+                            .catch((err) => {
+                                // Handle the error
+                                console.log(`Error ${err}`);
+                            });
+                        // resolve(compress);
+                    });
+                }
+
+                return forEachPromise(images, logItem).then(() => {
+                    console.log('all images done');
                 });
-        });
-    }
 
+            }).then(function () {
+                console.log('Place Successfully Edited');
+                // allPlaces[selectedPlace]=
+                return placesNotApproved.child(selectedPlace).once('value', function (snapshot) {
+                    console.log(snapshot.val());
+                    $("."+selectedPlace+' p').html(snapshot.val().name.toUpperCase());
+                    place[placesid.indexOf(selectedPlace)]=snapshot.val().name;
+                    allPlaces[selectedPlace] = snapshot.val();
+                }).then(() => {
+                    resolve('Place Successfully Edited');
+                });
+            }).catch((err) => {
+                console.log(err);
+            });
+        }
+    });
+    promise.then(function (val) {
+        reset();
+        alert(val);
+    }).catch(function (err) {
+        alert(err);
+    });
 }
 
 
-function del(link, detail) {
-    // var image=$("img[id="+link+"]").attr('src');
+function del(details) {
+    // let image=$("img[id="+link+"]").attr('src');
 
-    console.log(link);
-    var detailArray = detail.split(" ");
+    console.log(details);
+    let detailArray = details.split(" ");
     console.log(detailArray);
+    // console.log(name);
 
-
-    firebase.storage().ref('images/' + detailArray[4] + "/highres/" + detailArray[3]).delete().then(function () {
-        places.child(detailArray[4] + "/images/highres/" + detailArray[2]).remove();
+    firebase.storage().ref('images/' + selectedPlace + "/highres/" + detailArray[1]).delete().then(function () {
+        placesNotApproved.child(selectedPlace + "/images/highres/" + detailArray[3]).remove();
         console.log('highres image deleted');
     }).catch(function (error) {
-        // Uh-oh, an error occurred!
+        console.log(error);
     });
 
-    firebase.storage().ref('images/' + detailArray[4] + "/lowres/" + detailArray[1]).delete().then(function () {
-        places.child(detailArray[4] + "/images/lowres/" + detailArray[0]).remove();
+    delete allPlaces[selectedPlace].images.highres[detailArray[3]];
+
+    firebase.storage().ref('images/' + selectedPlace + "/lowres/" + detailArray[1]).delete().then(function () {
+        placesNotApproved.child(selectedPlace + "/images/lowres/" + detailArray[2]).remove();
         console.log('lowres image deleted');
     }).catch(function (error) {
-        // Uh-oh, an error occurred!
+        console.log(error);
     });
 
-    $('#' + link).remove();
+    delete allPlaces[selectedPlace].images.lowres[detailArray[2]];
+    delete allPlaces[selectedPlace].images.highres[detailArray[3]];
+
+    $('#' + detailArray[0]).remove();
 
 }
-
 
 function deleteThePlace() {
-    console.log(citySelected);
-    console.log(placeSelected);
-    // delete place
-    places.child(placeSelected).remove();
+    // console.log(selectedCity);
+    // console.log(selectedPlace);
 
+    let delFromCity = new Promise(function (resolve, reject) {
 
-    var delFromCity = function () {
-        return new Promise(function (resolve, reject) {
-            cities.child(citySelected + '/places/').once('value', function (snapshot) {
-                snapshot.forEach(function (child) {
-                    if (child.val() == placeSelected) {
-                        console.log(child.val());
-                        cities.child(citySelected + '/places/' + child.key).remove();
-                        // firebase.storage().ref('images/' + placeSelected).delete().then(function() {
-                        //     // places.child(detailArray[4]+"/images/lowres/"+detailArray[0]).remove(); 
-                        //     console.log('lowres image deleted');
-                        //     console.log('place deleted');
-                        // }).catch(function(error) {
-                        // // Uh-oh, an error occurred!
-                        // });
-                        // firebase.storage().ref('images/' + placeSelected).remove();
-                        console.log('place deleted');
-                    }
+        return cities.child(selectedCity + '/places/' + selectedPlace).remove().then(() => {
+
+            return places.child(selectedPlace).remove().then(() => {
+                return placesNotApproved.child(selectedPlace).remove().then(() => {
+                    let imagesNames = [];
+                    Object.keys(allPlaces[selectedPlace].images.highres).forEach((element) => {
+                        imagesNames.push(allPlaces[selectedPlace].images.highres[element].name);
+                    });
+                    // console.log(imagesNames);
+                    imagesNames.forEach((element) => {
+                        firebase.storage().ref('images/' + selectedPlace + "/lowres/" + element).delete();
+                        firebase.storage().ref('images/' + selectedPlace + "/highres/" + element).delete();
+                    });
+
                 });
             });
+        }).then(() => {
+            $("#selectPlace ." + selectedPlace).remove();
+            resolve();
         });
-    };
+    });
 
-
-    delFromCity();
+    delFromCity.then(() => {
+        reset();
+        console.log('Place deleted');
+        alert('Place deleted');
+        delete allPlaces[selectedPlace]
+    });
 }
-
 
 function searchPlaces() {
     $("#selectPlace").empty();
     const searchVal = $('#search').val();
     let i = 0;
-    allPlacesInACity.forEach(function (child) {
+    place.forEach(function (child) {
         if (child.includes(searchVal) == true) {
-            $("#selectPlace").append('<div class="alert" id="block" onclick=editPlace("' + allPlacesInACityIds[i] + '")>' +
+            $("#selectPlace").append('<div class="alert '+placesid[i]+'" id="block" onclick=openPlace("' + placesid[i] + '")>' +
                 '<p>' + child.toUpperCase() + '</p>' +
                 '</div>');
         }
@@ -328,16 +341,15 @@ function searchPlaces() {
 
 
 
-function uploadImageAsPromise(imageFile, pushedPlaceKey, i, highRes) {
+function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes, name) {
     return new Promise(function (resolve, reject) {
         var storageRef;
-        var name = uuidv4();
+
         if (highRes) {
             storageRef = firebase.storage().ref('images/' + pushedPlaceKey + "/highres/" + name + '.jpg');
         } else {
             storageRef = firebase.storage().ref('images/' + pushedPlaceKey + "/lowres/" + name + '.jpg');
         }
-
 
         //Upload file
         var task = storageRef.put(imageFile);
@@ -349,7 +361,7 @@ function uploadImageAsPromise(imageFile, pushedPlaceKey, i, highRes) {
                 console.log(percentage);
             },
             function error(err) {
-
+                console.log(`Error ${err}`);
             },
             function complete() {
                 var downloadURL = task.snapshot.downloadURL;
@@ -361,10 +373,11 @@ function uploadImageAsPromise(imageFile, pushedPlaceKey, i, highRes) {
                 };
                 console.log("Upload done");
                 if (highRes) {
-                    places.child(pushedPlaceKey).child("images").child("highres").push(data);
+                    placesNotApproved.child(pushedPlaceKey).child("images").child("highres").push(data);
                 } else {
-                    places.child(pushedPlaceKey).child("images").child("lowres").push(data);
+                    placesNotApproved.child(pushedPlaceKey).child("images").child("lowres").push(data);
                 }
+                resolve();
             }
         );
     });
@@ -377,4 +390,22 @@ function uuidv4() {
     )
 }
 
-//   console.log(uuidv4());
+function reset() {
+    $('#name').val('');
+    $('#description').val('');
+    $('#website').val('');
+    $('#geourl').val('');
+    $('#geolabel').val('');
+    $('#category').val('default');
+    $('#images').val('');
+    $('#city').val('');
+    $('#paired').val('');
+    $('#paired').css('display', 'none');
+    selectedPlace = '';
+    selectedCity = '';
+    images = {};
+    formChanged = false;
+    $('#presentImages').empty();
+    $('#submit').removeAttr('disabled');
+    $('#loader').css('display','none');
+}

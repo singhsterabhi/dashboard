@@ -14,8 +14,10 @@ function cat() {
 }
 
 function addAPlace() {
-
+    
     let promise = new Promise(function (resolve, reject) {
+        $('#submit').attr('disabled','');
+        $('#loader').css('display','block');
         var name, description, website, geourl, category, city, images, pairedcolor, geolabel;
         name = $('#name').val();
         description = $('#description').val();
@@ -40,18 +42,15 @@ function addAPlace() {
             approved: false
         };
 
-
         if (category == 'instagramhotspots') {
             pairedcolor = $('#pairedcolor').val();
             data[pairedcolor] = pairedcolor;
         }
 
-        // console.log(data);
         var i = 0;
         var pushedPlace = placesNotApproved.push().key;
         placesNotApproved.child(pushedPlace).update(data)
             .then(function () {
-
 
                 function forEachPromise(items, fn) {
                     return Array.from(items).reduce(function (promise, item) {
@@ -61,19 +60,18 @@ function addAPlace() {
                     }, Promise.resolve());
                 }
 
-
                 function logItem(element) {
                     return new Promise((resolve, reject) => {
                         // console.log(element);
                         var imgFile = images[i];
                         var name = uuidv4();
                         i++;
-                        imageCompressor.compress(imgFile, 0.6)
+                        imageCompressor.compress(imgFile, 0.2)
                             .then(function (result) {
-                                return uploadImageAsPromise(result, pushedPlace, i, false, name);
+                                return uploadImageAsPromise(result, pushedPlace, false, name);
                             })
                             .then(() => {
-                                return uploadImageAsPromise(imgFile, pushedPlace, i, true, name);
+                                return uploadImageAsPromise(imgFile, pushedPlace, true, name);
                             })
                             .then(() => {
                                 resolve();
@@ -85,7 +83,6 @@ function addAPlace() {
                         // resolve(compress);
                     });
                 }
-
 
                 return forEachPromise(images, logItem).then(() => {
                     console.log('all images done');
@@ -119,6 +116,8 @@ function reset() {
     $('#city').val('');
     $('#paired').val('');
     $('#paired').css('display', 'none');
+    $('#submit').removeAttr('disabled');
+    $('#loader').css('display','none');
 }
 
 function uuidv4() {

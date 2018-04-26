@@ -55,9 +55,10 @@
     <!-- <script src="node_modules/image-compressor.js/dist/image-compressor.js"></script> -->
 
     <script type="text/javascript" src="approve.js"></script>
-    <!-- <script type="text/javascript" src="img.js"></script> -->
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
 
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
@@ -203,21 +204,34 @@
 
                     <div class="form-group">
                         <label for="city">CITY</label>
-                        <input type="text" class="form-control" id="city" placeholder="Enter City" onchange="changetrigger()">
+                        <input type="text" class="form-control" id="city" placeholder="Enter City" disabled>
                     </div>
 
                     <label>IMAGES</label>
                     <div id="presentImages">
 
                     </div>
-                    <button type="button" class="btn btn-primary " onclick="approve()">APPROVE</button>
-                    <button type="button" class="btn btn-danger " onclick="deleteThePlace()">DELETE THE PLACE</button>
+
+                    <div id="loader" style="display: none; text-align: center;">
+                        <img src="loader.gif" alt="" style="width: 200px!important;height:60px!important;">
+                    </div>
+                    <button type="button" class="btn btn-primary " onclick="approve()" id="submit">APPROVE</button>
+                    <button type="button" class="btn btn-danger " onclick="deleteThePlace()" id="submit">DELETE THE PLACE</button>
                 </form>
             </div>
 
         </div>
 
 
+    </div>
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"
+        id="imageModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="text-align: center;">
+                <p>Image</p>
+                <img id="largeImage" src="" alt="">
+            </div>
+        </div>
     </div>
     <!-- /#right-panel -->
 
