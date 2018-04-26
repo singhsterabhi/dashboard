@@ -30,3 +30,7 @@ form img {
 #presentimages {
     display: inline-flex;
 }
+
+#presentImages > div > img{
+    cursor: pointer;
+}

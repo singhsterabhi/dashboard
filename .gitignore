@@ -64,5 +64,6 @@ typings/
 
 #folders
 sufee-admin-dashboard-master/
+public/
 
 # End of https://www.gitignore.io/api/node
