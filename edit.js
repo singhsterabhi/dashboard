@@ -7,7 +7,7 @@ let selectedPlace;
 let selectedCity;
 let images = {};
 let formChanged = false;
-
+let db;
 
 FileList.prototype.forEach = function (callback) {
     [].forEach.call(this, callback)
@@ -29,6 +29,11 @@ $(document).ready(function () {
                 uid = user.uid;
                 $('#logout').attr('title', user.email);
                 resolve();
+
+                if (uid == 'g8AntULTJcWcqTSbS3gSMoBslHw2')
+                    db = places;
+                else
+                    db = placesNotApproved;
             } else {
                 // User is signed out.
                 // ...
@@ -40,7 +45,9 @@ $(document).ready(function () {
 
     authentication.then(() => {
         console.log(uid);
-        placesNotApproved.orderByChild("user").equalTo(uid).once('value', function (snapshot) {
+
+
+        db.orderByChild("user").equalTo(uid).once('value', function (snapshot) {
 
             snapshot.forEach(function (child) {
                 console.log(child);
@@ -104,7 +111,7 @@ function openPlace(arg) {
             console.log(data.images.lowres[key].name);
             let highresKey;
             let highresFun = new Promise((resolve, reject) => {
-                return placesNotApproved.child(selectedPlace + '/images/highres').orderByChild("name").equalTo(data.images.lowres[key].name).once('value', (snapshot) => {
+                return db.child(selectedPlace + '/images/highres').orderByChild("name").equalTo(data.images.lowres[key].name).once('value', (snapshot) => {
                     snapshot.forEach((child) => {
                         highresKey = child.key;
                         resolve();
@@ -155,14 +162,13 @@ function changetrigger() {
     }
 }
 
-
 let details = ["name", "description", "url", "citycategory", "geourl", "geolabel"];
 
 function editThePlace() {
     let promise = new Promise(function (resolve, reject) {
-        $('#submit').attr('disabled','');
-        $('#loader').css('display','block');
         if (formChanged) {
+            $('.submit').attr('disabled', '');
+            $('#loader').css('display', 'block');
             details = ["name", "description", "url", "citycategory", "geourl", "geolabel"];
             let name, description, website, geourl, category, city, images, geolabel, pairedcolor;
             name = $('#name').val();
@@ -174,7 +180,6 @@ function editThePlace() {
             city = $('#city').val();
             images = document.getElementById('images').files;
             let citycategory = city + '_' + category;
-
 
             let newData = {
                 category: category,
@@ -193,10 +198,10 @@ function editThePlace() {
             }
 
             for (let i = 0; i < details.length; i++) {
-                placesNotApproved.child(selectedPlace + "/" + details[i]).set(newData[details[i]]);
+                db.child(selectedPlace + "/" + details[i]).set(newData[details[i]]);
             }
             let i = 0;
-            placesNotApproved.child(selectedPlace + '/approved').set(false).then(() => {
+            db.child(selectedPlace + '/approved').set(false).then(() => {
                 function forEachPromise(items, fn) {
                     return Array.from(items).reduce(function (promise, item) {
                         return promise.then(function () {
@@ -234,12 +239,14 @@ function editThePlace() {
                 });
 
             }).then(function () {
+                if (uid == 'g8AntULTJcWcqTSbS3gSMoBslHw2')
+                    db.child(selectedPlace + '/approved').set(true);
                 console.log('Place Successfully Edited');
                 // allPlaces[selectedPlace]=
-                return placesNotApproved.child(selectedPlace).once('value', function (snapshot) {
+                return db.child(selectedPlace).once('value', function (snapshot) {
                     console.log(snapshot.val());
-                    $("."+selectedPlace+' p').html(snapshot.val().name.toUpperCase());
-                    place[placesid.indexOf(selectedPlace)]=snapshot.val().name;
+                    $("." + selectedPlace + ' p').html(snapshot.val().name.toUpperCase());
+                    place[placesid.indexOf(selectedPlace)] = snapshot.val().name;
                     allPlaces[selectedPlace] = snapshot.val();
                 }).then(() => {
                     resolve('Place Successfully Edited');
@@ -248,6 +255,9 @@ function editThePlace() {
                 console.log(err);
             });
         }
+        else{
+            alert('Make some changes for successful edit!');
+        }
     });
     promise.then(function (val) {
         reset();
@@ -255,19 +265,20 @@ function editThePlace() {
     }).catch(function (err) {
         alert(err);
     });
+
 }
 
 
 function del(details) {
     // let image=$("img[id="+link+"]").attr('src');
-
+    formChanged = true;
     console.log(details);
     let detailArray = details.split(" ");
     console.log(detailArray);
     // console.log(name);
 
     firebase.storage().ref('images/' + selectedPlace + "/highres/" + detailArray[1]).delete().then(function () {
-        placesNotApproved.child(selectedPlace + "/images/highres/" + detailArray[3]).remove();
+        db.child(selectedPlace + "/images/highres/" + detailArray[3]).remove();
         console.log('highres image deleted');
     }).catch(function (error) {
         console.log(error);
@@ -276,7 +287,7 @@ function del(details) {
     delete allPlaces[selectedPlace].images.highres[detailArray[3]];
 
     firebase.storage().ref('images/' + selectedPlace + "/lowres/" + detailArray[1]).delete().then(function () {
-        placesNotApproved.child(selectedPlace + "/images/lowres/" + detailArray[2]).remove();
+        db.child(selectedPlace + "/images/lowres/" + detailArray[2]).remove();
         console.log('lowres image deleted');
     }).catch(function (error) {
         console.log(error);
@@ -295,10 +306,10 @@ function deleteThePlace() {
 
     let delFromCity = new Promise(function (resolve, reject) {
 
-        return cities.child(selectedCity + '/places/' + selectedPlace).remove().then(() => {
+        return cities.child(selectedCity + '/db/' + selectedPlace).remove().then(() => {
 
-            return places.child(selectedPlace).remove().then(() => {
-                return placesNotApproved.child(selectedPlace).remove().then(() => {
+            return db.child(selectedPlace).remove().then(() => {
+                return db.child(selectedPlace).remove().then(() => {
                     let imagesNames = [];
                     Object.keys(allPlaces[selectedPlace].images.highres).forEach((element) => {
                         imagesNames.push(allPlaces[selectedPlace].images.highres[element].name);
@@ -331,7 +342,7 @@ function searchPlaces() {
     let i = 0;
     place.forEach(function (child) {
         if (child.includes(searchVal) == true) {
-            $("#selectPlace").append('<div class="alert '+placesid[i]+'" id="block" onclick=openPlace("' + placesid[i] + '")>' +
+            $("#selectPlace").append('<div class="alert ' + placesid[i] + '" id="block" onclick=openPlace("' + placesid[i] + '")>' +
                 '<p>' + child.toUpperCase() + '</p>' +
                 '</div>');
         }
@@ -362,6 +373,7 @@ function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes, name) {
             },
             function error(err) {
                 console.log(`Error ${err}`);
+
             },
             function complete() {
                 var downloadURL = task.snapshot.downloadURL;
@@ -373,9 +385,9 @@ function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes, name) {
                 };
                 console.log("Upload done");
                 if (highRes) {
-                    placesNotApproved.child(pushedPlaceKey).child("images").child("highres").push(data);
+                    db.child(pushedPlaceKey).child("images").child("highres").push(data);
                 } else {
-                    placesNotApproved.child(pushedPlaceKey).child("images").child("lowres").push(data);
+                    db.child(pushedPlaceKey).child("images").child("lowres").push(data);
                 }
                 resolve();
             }
@@ -406,6 +418,6 @@ function reset() {
     images = {};
     formChanged = false;
     $('#presentImages').empty();
-    $('#submit').removeAttr('disabled');
-    $('#loader').css('display','none');
+    $('.submit').removeAttr('disabled');
+    $('#loader').css('display', 'none');
 }

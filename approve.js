@@ -136,7 +136,7 @@ function changetrigger() {
 
 
 function approve() {
-    $('#submit').attr('disabled', '');
+    $('.submit').attr('disabled', '');
     $('#loader').css('display', 'block');
     let city;
     let data;
@@ -251,6 +251,6 @@ function reset() {
     images = {};
     formChanged = false;
     $('#presentImages').empty();
-    $('#submit').removeAttr('disabled');
+    $('.submit').removeAttr('disabled');
     $('#loader').css('display', 'none');
 }

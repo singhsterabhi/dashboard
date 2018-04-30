@@ -1,7 +1,10 @@
-function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes,name) {
+// let uid;
+let db;
+
+function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes, name, database) {
     return new Promise(function (resolve, reject) {
         var storageRef;
-        
+
         if (highRes) {
             storageRef = firebase.storage().ref('images/' + pushedPlaceKey + "/highres/" + name + '.jpg');
         } else {
@@ -19,7 +22,7 @@ function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes,name) {
             },
             function error(err) {
                 console.log(`Error ${err}`);
-                
+
             },
             function complete() {
                 var downloadURL = task.snapshot.downloadURL;
@@ -31,9 +34,9 @@ function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes,name) {
                 };
                 console.log("Upload done");
                 if (highRes) {
-                    placesNotApproved.child(pushedPlaceKey).child("images").child("highres").push(data);
+                    database.child(pushedPlaceKey).child("images").child("highres").push(data);
                 } else {
-                    placesNotApproved.child(pushedPlaceKey).child("images").child("lowres").push(data);
+                    database.child(pushedPlaceKey).child("images").child("lowres").push(data);
                 }
                 resolve();
             }
@@ -44,6 +47,7 @@ function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes,name) {
 
 auth.onAuthStateChanged(function (user) {
     if (user) {
+        uid = user.uid;
         if (user.uid != "g8AntULTJcWcqTSbS3gSMoBslHw2") {
             $('.approve').remove();
         } else {
@@ -52,6 +56,10 @@ auth.onAuthStateChanged(function (user) {
         console.log('logged in', user.uid);
         uid = user.uid;
         $('#logout').attr('title', user.email);
+        if (uid == 'g8AntULTJcWcqTSbS3gSMoBslHw2')
+            db = places;
+        else
+            db = placesNotApproved;
     } else {
         // User is signed out.
         // ...
