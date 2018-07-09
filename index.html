@@ -22,7 +22,7 @@
     <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-storage.js"></script>
-    <script type="text/javascript" src="firebase.js"></script>
+    <script type="text/javascript" src="js/firebase.js"></script>
 
     <script type="text/javascript">
         auth.onAuthStateChanged(function (user) {
@@ -37,21 +37,25 @@
         });
     </script>
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+        crossorigin="anonymous">
+
+    <!-- 
     <link rel="stylesheet" href="assets/css/normalize.css">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/themify-icons.css">
     <link rel="stylesheet" href="assets/css/flag-icon.min.css">
-    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css"> -->
     <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
-    <link rel="stylesheet" href="assets/scss/style.css">
-    <link href="assets/css/lib/vector-map/jqvmap.min.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="assets/scss/style.css"> -->
+    <!-- <link href="assets/css/lib/vector-map/jqvmap.min.css" rel="stylesheet"> -->
 
 
-    <script type="text/javascript" src="index.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="css/index.css">
 
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
@@ -125,10 +129,15 @@
 
     <!-- Right Panel -->
 
-    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
-    <script src="assets/js/plugins.js"></script>
-    <script src="assets/js/main.js"></script>
+    <!-- <script src="assets/js/vendor/jquery-2.1.4.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+        crossorigin="anonymous"></script>
+    <!-- <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/main.js"></script> -->
     <script>
         $('#login').on('click', function () {
             $('#loginModal').modal();

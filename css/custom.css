@@ -1,0 +1,106 @@
+#right-panel {
+    /* text-align: center; */
+    background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+    margin-left: 200px;
+    /* Same as the width of the sidenav */
+    /* font-size: 28px;  */
+    /* Increased text to enable scrolling */
+    padding: 0px 10px 20px 10px;
+}
+
+.content {
+    width: 80%;
+    /* display: block; */
+    margin: 20px 10%;
+    /* width: 70%!important; */
+    background: #fff;
+    padding: 40px 70px;
+}
+
+input,
+select,
+textarea {
+    background-color: #ddd !important;
+}
+
+.content button {
+    margin-top: 20px;
+}
+
+form img {
+    width: 100px !important;
+    height: 100px !important;
+}
+
+#presentimages {
+    display: inline-flex;
+}
+
+#presentImages>div>img {
+    cursor: pointer;
+}
+
+.left-panel {
+    height: 100%;
+    width: 200px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 70px;
+    color: #818181;
+}
+
+.left-panel a {
+    width: 200px;
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    /* font-size: 25px; */
+    color: #818181;
+    display: block;
+}
+
+.left-panel li {
+    margin-top: 20px;
+}
+
+.active {
+    background-color: #333;
+}
+
+.left-panel a:hover {
+    color: #f1f1f1;
+}
+
+.header {
+    background-color: #111;
+    height: 60px;
+    position: relative;
+}
+
+.header a{
+    color: #fff;
+}
+
+.header a:hover{
+    color: #fff
+}
+
+.sudo-nav {
+    padding-top: 10px;
+}
+
+.header .logo{
+    position: absolute;
+    top: 25%;
+    right: 40%;
+}
+
+
+.header .logout{
+    position: absolute;
+    top: 25%;
+    right: 10px;
+}
