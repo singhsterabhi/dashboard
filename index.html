@@ -40,52 +40,34 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
         crossorigin="anonymous">
 
-    <!-- 
-    <link rel="stylesheet" href="assets/css/normalize.css">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
-    <link rel="stylesheet" href="assets/css/themify-icons.css">
-    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
-    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css"> -->
-    <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
-    <!-- <link rel="stylesheet" href="assets/scss/style.css"> -->
-    <!-- <link href="assets/css/lib/vector-map/jqvmap.min.css" rel="stylesheet"> -->
-
-
     <script type="text/javascript" src="js/index.js"></script>
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/index.css">
 
-    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
-
 </head>
 
 <body>
 
+    <div class="header">
+        <div class="logo">
+            <a class="navbar-brand" href="./">Things in a City</a>
+        </div>
+    </div>
+
     <!-- Right Panel -->
 
     <div id="right-panel" class="right-panel">
-
-        <!-- Header-->
-        <header id="header" class="header">
-            <div class="" style="text-align:center;">
-                <h3>
-                    <a href="/">Dashboard</a>
-                </h3>
-            </div>
-        </header>
-        <!-- Header-->
 
         <!-- Body -->
         <div id="container">
             <div class=" text-center col-sm-6 offset-sm-3" id="authdialog">
                 <div class="card-header">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link active col-sm-6" id="nav-login-tab" data-toggle="tab" href="#nav-login" role="tab" aria-controls="nav-login"
+                        <a class="nav-item nav-link active col-sm-12" id="nav-login-tab" data-toggle="tab" href="#nav-login" role="tab" aria-controls="nav-login"
                             aria-selected="true">LOGIN</a>
-                        <a class="nav-item nav-link  col-sm-6" id="nav-signup-tab" data-toggle="tab" href="#nav-signup" role="tab" aria-controls="nav-signup"
-                            aria-selected="false">SIGN UP</a>
+                        <!-- <a class="nav-item nav-link  col-sm-6" id="nav-signup-tab" data-toggle="tab" href="#nav-signup" role="tab" aria-controls="nav-signup"
+                            aria-selected="false">SIGN UP</a> -->
                     </div>
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="nav-login" role="tabpanel" aria-labelledby="nav-login-tab">
@@ -99,10 +81,10 @@
                                     <input type="password" class="form-control" id="loginPassword" placeholder="Password">
                                 </div>
                                 <div id="loginError"></div>
-                                <button type="button" class="btn btn-primary" onclick="login()">LOGIN</button>
+                                <button type="button" class="btn btn-block btn-primary" onclick="login()">LOGIN</button>
                             </form>
                         </div>
-                        <div class="tab-pane fade" id="nav-signup" role="tabpanel" aria-labelledby="nav-signup-tab">
+                        <!-- <div class="tab-pane fade" id="nav-signup" role="tabpanel" aria-labelledby="nav-signup-tab">
                             <form>
                                 <div class="form-group">
                                     <label for="signUpEmail">Email address</label>
@@ -117,9 +99,9 @@
                                 <div id="signUpError"></div>
                                 <button type="button" class="btn btn-primary" onclick="signup()">SIGN UP</button>
                             </form>
-                        </div>
+                        </div> -->
                     </div>
-                    <button type="button" class="btn btn-primary btn-lg btn-block" id="facebook" onclick="fblogin()">LOGIN WITH FACEBOOK</button>
+                    <!-- <button type="button" class="btn btn-primary btn-lg btn-block" id="facebook" onclick="fblogin()">LOGIN WITH FACEBOOK</button> -->
                 </div>
             </div>
         </div>

@@ -80,26 +80,22 @@ form img {
     position: relative;
 }
 
-.header a{
+.header a {
     color: #fff;
-}
-
-.header a:hover{
-    color: #fff
+    text-decoration: none;
 }
 
 .sudo-nav {
     padding-top: 10px;
 }
 
-.header .logo{
+.header .logo {
     position: absolute;
     top: 25%;
     right: 40%;
 }
 
-
-.header .logout{
+.header .logout {
     position: absolute;
     top: 25%;
     right: 10px;
