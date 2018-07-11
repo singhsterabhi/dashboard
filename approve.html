@@ -13,18 +13,11 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+        crossorigin="anonymous">
 
-    <link rel="stylesheet" href="assets/css/normalize.css">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
-    <link rel="stylesheet" href="assets/css/themify-icons.css">
-    <link rel="stylesheet" href="assets/css/flag-icon.min.css">
-    <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
-    <!-- <link rel="stylesheet" href="assets/css/bootstrap-select.less"> -->
-    <link rel="stylesheet" href="assets/scss/style.css">
-    <link href="assets/css/lib/vector-map/jqvmap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="custom.css">
-    <link rel="stylesheet" href="edit.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="css/edit.css">
 
     <!-- jquery -->
     <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
@@ -35,13 +28,18 @@
     <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-storage.js"></script>
-    <script type="text/javascript" src="firebase.js"></script>
+    <script type="text/javascript" src="js/firebase.js"></script>
     <script>
         auth.onAuthStateChanged(function (user) {
             if (user) {
                 console.log('logged in', user.uid);
                 $('#logout').attr('title', user.email);
                 uid = user.uid;
+                if (user.uid != "g8AntULTJcWcqTSbS3gSMoBslHw2") {
+                    $('.approve').remove();
+                } else {
+                    $('.approve').css('display', 'block');
+                }
             } else {
                 // User is signed out.
                 // ...
@@ -51,198 +49,165 @@
         });
     </script>
 
+    <script type="text/javascript" src="js/"></script>
 
-    <!-- <script src="node_modules/image-compressor.js/dist/image-compressor.js"></script> -->
-
-    <script type="text/javascript" src="approve.js"></script>
-
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
-        crossorigin="anonymous"></script>
-
-    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
 
 </head>
 
 <body>
+    <div class="header">
+        <div class="logo">
+            <a class="navbar-brand" href="./">Things in a City</a>
+        </div>
+
+        <div class="logout">
+            <button type="button" class="btn btn-light" id="logout" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="body">
+        <aside id="left-panel" class="left-panel">
+            <nav class="navbar navbar-expand-sm navbar-default">
+
+                <div id="main-menu" class="main-menu collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <h6 class="menu-title">Operations</h6>
+                        <!-- /.menu-title -->
+                        <li class="">
+                            <a href="add.html" aria-haspopup="true">
+                                <i class="menu-icon fa fa-plus"></i>Add a Place</a>
+                        </li>
+                        <li class="">
+                            <a href="edit.html" aria-haspopup="true">
+                                <i class="menu-icon fa fa-edit"></i>Edit a Place</a>
+                        </li>
+                        <li class="approve active" style="display:none;">
+                            <a href="approve.html" aria-haspopup="true">
+                                <i class="menu-icon fa fa-check"></i>Approve Places</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </nav>
+        </aside>
+
+        <!-- /#left-panel -->
+
+        <!-- Left Panel -->
 
 
-    <!-- Left Panel -->
 
-    <aside id="left-panel" class="left-panel">
-        <nav class="navbar navbar-expand-sm navbar-default">
+        <!-- Right Panel -->
 
-            <div class="navbar-header">
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <i class="fa fa-bars"></i>
-                </button>
-                <a class="navbar-brand" href="./">Things in a City</a>
-                <a class="navbar-brand hidden" href="./">
-                    <img src="images/logo2.png" alt="Logo">
-                </a>
+        <div id="right-panel" class="right-panel">
+
+            <div class="sudo-nav" align="center">
+                <h4>APPROVE A PLACE</h4>
             </div>
 
-            <div id="main-menu" class="main-menu collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <!-- <li class="active">
-                        <a href="index.html"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
-                    </li> -->
-                    <h3 class="menu-title">Operations</h3>
-                    <!-- /.menu-title -->
-                    <li class="">
-                        <a href="add.html" aria-haspopup="true">
-                            <i class="menu-icon fa fa-plus"></i>Add a Place</a>
-                    </li>
-                    <li class="">
-                        <a href="edit.html" aria-haspopup="true">
-                            <i class="menu-icon fa fa-edit"></i>Edit a Place</a>
-                    </li>
-                    <li class="approve active">
-                        <a href="approve.html" aria-haspopup="true">
-                            <i class="menu-icon fa fa-check"></i>Approve Places</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </nav>
-    </aside>
-    <!-- /#left-panel -->
+            <div class="content row">
+                <div class="col-sm-5">
+                    <form id="edit">
 
-    <!-- Left Panel -->
+                        <label for="selectPlace">Select a Place</label>
+                        <div id="placelist">
+                            <div class="form-group">
+                                <input type="search" class="form-control" id="search" placeholder="Search" onkeyup="searchPlaces()">
+                            </div>
+                            <div id="selectPlace">
 
-    <!-- Right Panel -->
 
-    <div id="right-panel" class="right-panel">
-
-        <!-- Header-->
-        <header id="header" class="header">
-
-            <div class="header-menu">
-
-                <div class="col-sm-12">
-                    <a id="menuToggle" class="menutoggle pull-left">
-                        <i class="fa fa fa-tasks"></i>
-                    </a>
-                    <div class="row">
-                        <div class="header-left col-sm-11">
-                            <h3>Approve places</h3>
+                            </div>
                         </div>
-                        <div class="pull-right row col-sm-1">
-                            <!-- <h3 id="user">as</h3> -->
-                            <button type="button" class="btn btn-primary" id="logout" onclick="logout()" data-toggle="tooltip" data-placement="left"
-                                title="">LOG OUT</button>
+                    </form>
+                </div>
+                <br>
+                <div id="editPlace" class="col-sm-7">
+                    <h2>Verify place</h2>
+                    <br>
+                    <form>
+                        <div class="form-group">
+                            <label for="name">NAME</label>
+                            <input type="text" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Enter Name" onchange="changetrigger()">
+
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label for="description">DESCRIPTION</label>
+                            <!-- <input type="text" class="form-control" id="description" placeholder="Password"> -->
+                            <textarea class="form-control" id="description" placeholder="Enter Description" rows="2" onchange="changetrigger()"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="website">WEBSITE</label>
+                            <input type="text" class="form-control" id="website" placeholder="Enter Website" onchange="changetrigger()">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="geourl">GEO URL</label>
+                            <input type="text" class="form-control" id="geourl" placeholder="Geo Url" onchange="changetrigger()">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="geolabel">GEO LABEL</label>
+                            <input type="text" class="form-control" id="geolabel" placeholder="Geo Label" onchange="changetrigger()">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="category">CATEGORY</label>
+                            <select class="form-control" name="category" id="category" onchange="changetrigger()">
+                                <option>Default select</option>
+                                <option value="coworkingspaces">Co-Working Spaces</option>
+                                <option value="instagramhotspots">Instagram Hotspots</option>
+                                <option value="cafes">Cafes</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="display:none;" id="paired">
+                            <label for="pairedcolor">PAIRED COLOUR</label>
+                            <input type="text" class="form-control" id="pairedcolor" placeholder="Paired Colour" onchange="changetrigger()">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="city">CITY</label>
+                            <input type="text" class="form-control" id="city" placeholder="Enter City" disabled>
+                        </div>
+
+                        <label>IMAGES</label>
+                        <div id="presentImages">
+
+                        </div>
+
+                        <div id="loader" style="display: none; text-align: center;">
+                            <img src="loader.gif" alt="" style="width: 200px!important;height:100px!important;">
+                        </div>
+                        <button type="button" class="btn btn-primary submit" onclick="approve()" id="submit">APPROVE</button>
+                        <button type="button" class="btn btn-danger submit" onclick="deleteThePlace()" id="submit">DELETE THE PLACE</button>
+                    </form>
                 </div>
 
             </div>
 
-        </header>
-        <!-- /header -->
-        <!-- Header-->
-
-        <div class="content row">
-            <div class="col-sm-5">
-                <form id="edit">
-
-                    <label for="selectPlace">Select a Place</label>
-                    <div id="placelist">
-                        <div class="form-group">
-                            <input type="search" class="form-control" id="search" placeholder="Search" onkeyup="searchPlaces()">
-                        </div>
-                        <div id="selectPlace">
-
-
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <br>
-            <div id="editPlace" class="col-sm-7">
-                <h2>Verify place</h2>
-                <br>
-                <form>
-                    <div class="form-group">
-                        <label for="name">NAME</label>
-                        <input type="text" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Enter Name" onchange="changetrigger()">
-
-                    </div>
-                    <div class="form-group">
-                        <label for="description">DESCRIPTION</label>
-                        <!-- <input type="text" class="form-control" id="description" placeholder="Password"> -->
-                        <textarea class="form-control" id="description" placeholder="Enter Description" rows="2" onchange="changetrigger()"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="website">WEBSITE</label>
-                        <input type="text" class="form-control" id="website" placeholder="Enter Website" onchange="changetrigger()">
-
-                    </div>
-                    <div class="form-group">
-                        <label for="geourl">GEO URL</label>
-                        <input type="text" class="form-control" id="geourl" placeholder="Geo Url" onchange="changetrigger()">
-
-                    </div>
-                    <div class="form-group">
-                        <label for="geolabel">GEO LABEL</label>
-                        <input type="text" class="form-control" id="geolabel" placeholder="Geo Label" onchange="changetrigger()">
-
-                    </div>
-                    <div class="form-group">
-                        <label for="category">CATEGORY</label>
-                        <select class="form-control" name="category" id="category" onchange="changetrigger()">
-                            <option>Default select</option>
-                            <option value="coworkingspaces">Co-Working Spaces</option>
-                            <option value="instagramhotspots">Instagram Hotspots</option>
-                            <option value="cafes">Cafes</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="display:none;" id="paired">
-                        <label for="pairedcolor">PAIRED COLOUR</label>
-                        <input type="text" class="form-control" id="pairedcolor" placeholder="Paired Colour" onchange="changetrigger()">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="city">CITY</label>
-                        <input type="text" class="form-control" id="city" placeholder="Enter City" disabled>
-                    </div>
-
-                    <label>IMAGES</label>
-                    <div id="presentImages">
-
-                    </div>
-
-                    <div id="loader" style="display: none; text-align: center;">
-                        <img src="loader.gif" alt="" style="width: 200px!important;height:100px!important;">
-                    </div>
-                    <button type="button" class="btn btn-primary submit" onclick="approve()" id="submit">APPROVE</button>
-                    <button type="button" class="btn btn-danger submit" onclick="deleteThePlace()" id="submit">DELETE THE PLACE</button>
-                </form>
-            </div>
 
         </div>
-
-
-    </div>
-    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"
-        id="imageModal">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content" style="text-align: center;">
-                <p>Image</p>
-                <img id="largeImage" src="" alt="">
+        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"
+            id="imageModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" style="text-align: center;">
+                    <p>Image</p>
+                    <img id="largeImage" src="" alt="">
+                </div>
             </div>
         </div>
+        <!-- /#right-panel -->
+
+        <!-- Right Panel -->
     </div>
-    <!-- /#right-panel -->
-
-    <!-- Right Panel -->
-
-    <script src="assets/js/vendor/jquery-2.1.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
-    <script src="assets/js/plugins.js"></script>
-    <script src="assets/js/main.js"></script>
 
 
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+        crossorigin="anonymous"></script>
 
 </body>
 
