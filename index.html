@@ -45,6 +45,9 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/index.css">
 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
+        crossorigin="anonymous">
+
 </head>
 
 <body>
@@ -64,8 +67,8 @@
             <div class=" text-center col-sm-6 offset-sm-3" id="authdialog">
                 <div class="card-header">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link active col-sm-12" id="nav-login-tab" data-toggle="tab" href="#nav-login" role="tab" aria-controls="nav-login"
-                            aria-selected="true">LOGIN</a>
+                        <p class="active col-sm-12" id="nav-login-tab" data-toggle="tab" href="#nav-login" role="tab" aria-controls="nav-login"
+                            aria-selected="true">LOGIN</p>
                         <!-- <a class="nav-item nav-link  col-sm-6" id="nav-signup-tab" data-toggle="tab" href="#nav-signup" role="tab" aria-controls="nav-signup"
                             aria-selected="false">SIGN UP</a> -->
                     </div>
@@ -101,7 +104,15 @@
                             </form>
                         </div> -->
                     </div>
-                    <!-- <button type="button" class="btn btn-primary btn-lg btn-block" id="facebook" onclick="fblogin()">LOGIN WITH FACEBOOK</button> -->
+                    <div class="facebook">
+                        <span>
+                            Login with Facebook :
+                            <button type="button" class="btn btn-primary" id="facebook" onclick="fblogin()">
+                                <i class="fab fa-facebook-f"></i>
+                            </button>
+
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>

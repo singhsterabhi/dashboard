@@ -1,19 +1,37 @@
-#authdialog{
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+input {
+    border: 0!important;
+    box-sizing: border-box!important;
+    font-family: "Roboto", sans-serif !important;
+    background: #f2f2f2!important;
+}
+
+body {
+    background: #60C85A;
+}
+
+#authdialog {
     margin-top: 50px;
 }
 
-.tab-pane{
+.card-header {
+    background: white;
+    z-index: 1;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+.tab-pane {
     background: white;
     padding: 30px 60px;
     text-align: left;
 }
 
-#signUpError p,#loginError p{
+#signUpError p,
+#loginError p {
     color: red;
 }
 
-
-#facebook{
+#facebook {
     background-color: #3b5998;
     /* width: 80%; */
     margin-top: 20px;
@@ -29,14 +47,36 @@
 .header a {
     color: #fff;
     text-decoration: none;
+    padding-top: 15px;
 }
 
 .sudo-nav {
     padding-top: 30px;
 }
+
 /* 
 .header .logo {
     position: absolute;
     top: 25%;
     right: 40%;
 } */
+
+#facebook {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    margin: 0;
+}
+
+.facebook {
+    position: relative;
+    padding-bottom: 50px;
+}
+
+.facebook>span {
+    line-height: 40px;
+    /* text-align: center; */
+    position: absolute;
+    right: 60px;
+}
