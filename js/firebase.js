@@ -1,12 +1,25 @@
 // Initialize Firebase
-let config = {
-    apiKey: "AIzaSyBk0Q_D8Pv8GIORHSv7WkZ_5vJdXY0Sya4",
-    authDomain: "dashboard-8df80.firebaseapp.com",
-    databaseURL: "https://dashboard-8df80.firebaseio.com",
-    projectId: "dashboard-8df80",
-    storageBucket: "dashboard-8df80.appspot.com",
-    messagingSenderId: "996615708415"
-};
+
+// abhishek
+// let config = {
+//     apiKey: "AIzaSyBk0Q_D8Pv8GIORHSv7WkZ_5vJdXY0Sya4",
+//     authDomain: "dashboard-8df80.firebaseapp.com",
+//     databaseURL: "https://dashboard-8df80.firebaseio.com",
+//     projectId: "dashboard-8df80",
+//     storageBucket: "dashboard-8df80.appspot.com",
+//     messagingSenderId: "996615708415"
+// };
+
+// supratim
+var config = {
+    apiKey: "AIzaSyD7ar06_cdzkS8jtjE2_HeDUUhGg_82J6s",
+    authDomain: "things-in-a-city.firebaseapp.com",
+    databaseURL: "https://things-in-a-city.firebaseio.com",
+    projectId: "things-in-a-city",
+    storageBucket: "things-in-a-city.appspot.com",
+    messagingSenderId: "984814225177"
+  };
+
 firebase.initializeApp(config);
 
 let auth = firebase.auth();
@@ -29,7 +42,7 @@ let category = ['coworkingspaces', 'instagramspots', 'cafes'];
 function logout() {
     firebase.auth().signOut().then(function () {
         // Sign-out successful.
-        console.log('signed out');
+        // console.log('signed out');
         window.location = "/";
     }).catch(function (error) {
         // An error happened.

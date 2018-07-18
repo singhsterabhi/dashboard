@@ -25,7 +25,7 @@ $(document).ready(function () {
                 } else {
                     $('.approve').css('display', 'block');
                 }
-                console.log('logged in', user.uid);
+                // console.log('logged in', user.uid);
                 uid = user.uid;
                 $('#logout').attr('title', user.email);
                 resolve();
@@ -37,7 +37,7 @@ $(document).ready(function () {
             } else {
                 // User is signed out.
                 // ...
-                console.log('logged out');
+                // console.log('logged out');
                 window.location = "/";
             }
         });
