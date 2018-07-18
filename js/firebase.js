@@ -20,6 +20,7 @@ let imagesRef = firebase.storage().ref().child('images');
 let places = database.ref('places');
 let cities = database.ref('cities');
 let placesNotApproved = database.ref('placessubmitted');
+let users = database.ref('users');
 let uid = '';
 
 let category = ['coworkingspaces', 'instagramspots', 'cafes'];

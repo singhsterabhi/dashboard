@@ -24,12 +24,11 @@
     <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-storage.js"></script>
     <script type="text/javascript" src="js/firebase.js"></script>
 
-    <script src="js/image-compressor.js"></script>
-
-    <script type="text/javascript" src="js/add.js"></script>
-    <script type="text/javascript" src="js/img.js"></script>
+    <script type="text/javascript" src="js/users.js"></script>
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="css/users.css">
 
 </head>
 
@@ -56,7 +55,7 @@
                     <ul class="nav navbar-nav">
                         <h6 class="menu-title">Operations</h6>
                         <!-- /.menu-title -->
-                        <li class="active">
+                        <li class="">
                             <a href="add.html" aria-haspopup="true">
                                 <i class="menu-icon fa fa-plus"></i>Add a Place</a>
                         </li>
@@ -64,11 +63,11 @@
                             <a href="edit.html" aria-haspopup="true">
                                 <i class="menu-icon fa fa-edit"></i>Edit a Place</a>
                         </li>
-                        <li class="approve" style="display:none;">
+                        <li class="approve" style="">
                             <a href="approve.html" aria-haspopup="true">
                                 <i class="menu-icon fa fa-check"></i>Approve Places</a>
                         </li>
-                        <li class="" style="">
+                        <li class="active" style="">
                             <a href="users.html" aria-haspopup="true">
                                 <i class="menu-icon fa fa-check"></i>User List</a>
                         </li>
@@ -86,64 +85,22 @@
         <div id="right-panel" class="right-panel">
 
             <div class="sudo-nav" align="center">
-                <h4>ADD A PLACE</h4>
+                <h4>USERS</h4>
             </div>
 
             <!-- content -->
             <div class="content">
-                <form id="add" action="">
-                    <div class="form-group">
-                        <label for="name">NAME</label>
-                        <input type="text" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Enter Name">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="">Email</th>
+                            <th scope="col" class="">Admin Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                    </div>
-                    <div class="form-group">
-                        <label for="description">DESCRIPTION</label>
-                        <!-- <input type="text" class="form-control" id="description" placeholder="Password"> -->
-                        <textarea class="form-control" id="description" placeholder="Enter Description" rows="2"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="website">WEBSITE</label>
-                        <input type="text" class="form-control" id="website" placeholder="Enter Website">
-
-                    </div>
-                    <div class="form-group">
-                        <label for="geourl">GEO URL</label>
-                        <input type="text" class="form-control" id="geourl" placeholder="Geo Url">
-
-                    </div>
-                    <div class="form-group">
-                        <label for="geolabel">GEO LABEL</label>
-                        <input type="text" class="form-control" id="geolabel" placeholder="Geo Label">
-
-                    </div>
-
-                    <div class="form-group">
-                        <label for="category">CATEGORY</label>
-                        <select class="form-control" name="category" id="category" onchange="cat()">
-                            <option value="default">Default select</option>
-                            <option value="coworkingspaces">Co-Working Spaces</option>
-                            <option value="instagramhotspots">Instagram Hotspots</option>
-                            <option value="cafes">Cafes</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="display:none;" id="paired">
-                        <label for="pairedcolor">PAIRED COLOUR</label>
-                        <input type="text" class="form-control" id="pairedcolor" placeholder="Paired Colour">
-                    </div>
-                    <div class="form-group">
-                        <label for="city">CITY</label>
-                        <input type="text" class="form-control" id="city" placeholder="Enter City">
-                    </div>
-                    <div class="form-group">
-                        <label for="images">IMAGES</label>
-                        <input type="file" class="form-control" id="images" multiple>
-                    </div>
-                    <div id="loader" style="display: none; text-align: center;">
-                        <img src="loader.gif" alt="" style="width: 200px!important;height:100px!important;">
-                    </div>
-                    <button type="button" class="btn btn-primary btn-lg btn-block" onclick="addAPlace()" id="submit">SUBMIT</button>
-                </form>
+                    </tbody>
+                </table>
             </div>
             <!-- content -->
         </div>

@@ -10,7 +10,7 @@ exports.addNewUser = functions.auth.user().onCreate((user) => {
     data = {
         name: user.displayName,
         email: user.email,
-        admin: "false"
+        status: "user"
     };
     console.log(data);
     admin.database().ref(`/users/${user.uid}`).set(data);
