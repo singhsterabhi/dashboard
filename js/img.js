@@ -48,7 +48,13 @@ function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes, name, database
 auth.onAuthStateChanged(function (user) {
     if (user) {
         uid = user.uid;
-        if (user.uid != "g8AntULTJcWcqTSbS3gSMoBslHw2") {
+        let status;
+        users.child(uid+"/status").once('value', function (snapshot) {
+            // console.log(snapshot.val());
+            status=snapshot.val();
+        });
+
+        if (status == "user") {
             $('.approve').remove();
         } else {
             $('.approve').css('display', 'block');
@@ -56,7 +62,7 @@ auth.onAuthStateChanged(function (user) {
         console.log('logged in', user.uid);
         uid = user.uid;
         $('#logout').attr('title', user.email);
-        if (uid == 'g8AntULTJcWcqTSbS3gSMoBslHw2')
+        if (uid != 'user')
             db = places;
         else
             db = placesNotApproved;

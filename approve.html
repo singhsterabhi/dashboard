@@ -35,7 +35,13 @@
                 console.log('logged in', user.uid);
                 $('#logout').attr('title', user.email);
                 uid = user.uid;
-                if (user.uid != "g8AntULTJcWcqTSbS3gSMoBslHw2") {
+                let status;
+                users.child(uid + "/status").once('value', function (snapshot) {
+                    // console.log(snapshot.val());
+                    status = snapshot.val();
+                });
+
+                if (status == "user") {
                     $('.approve').remove();
                 } else {
                     $('.approve').css('display', 'block');

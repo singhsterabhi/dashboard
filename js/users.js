@@ -6,15 +6,25 @@ $(document).ready(function () {
     let authentication = new Promise((resolve, reject) => {
         auth.onAuthStateChanged(function (user) {
             if (user) {
-                if (user.uid != "g8AntULTJcWcqTSbS3gSMoBslHw2") {
+                uid = user.uid;
+                let status;
+                users.child(uid + "/status").once('value', function (snapshot) {
+                    // console.log(snapshot.val());
+                    status = snapshot.val();
+                });
+
+                if (status == "user") {
                     $('.approve').remove();
                 } else {
                     $('.approve').css('display', 'block');
                 }
                 console.log('logged in', user.uid);
-                uid = user.uid;
+
                 $('#logout').attr('title', user.email);
-                resolve();
+                if (uid != 'user')
+                    db = places;
+                else
+                    db = placesNotApproved;
             } else {
                 // User is signed out.
                 // ...

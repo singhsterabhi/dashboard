@@ -24,6 +24,8 @@ function addAPlace() {
         category = $('select[name=category]').val();
         city = $('#city').val();
         images = document.getElementById('images').files;
+        console.log(images);
+        
         var citycategory = city + '_' + category;
 
         var data = {
@@ -67,6 +69,8 @@ function addAPlace() {
                     return new Promise((resolve, reject) => {
                         // console.log(element);
                         var imgFile = images[i];
+                        console.log(imgFile);
+                        
                         var name = uuidv4();
                         i++;
                         imageCompressor.compress(imgFile, 0.2)
