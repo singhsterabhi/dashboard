@@ -12,7 +12,6 @@ $(document).ready(function () {
                     // console.log(snapshot.val());
                     status = snapshot.val();
                 });
-
                 if (status == "user") {
                     $('.approve').remove();
                 } else {
@@ -25,6 +24,8 @@ $(document).ready(function () {
                     db = places;
                 else
                     db = placesNotApproved;
+
+                resolve();
             } else {
                 // User is signed out.
                 // ...

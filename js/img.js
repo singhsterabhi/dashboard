@@ -49,16 +49,19 @@ auth.onAuthStateChanged(function (user) {
     if (user) {
         uid = user.uid;
         let status;
-        users.child(uid+"/status").once('value', function (snapshot) {
+        users.child(uid + "/status").once('value', function (snapshot) {
             // console.log(snapshot.val());
-            status=snapshot.val();
+            status = snapshot.val();
         });
 
-        if (status == "user") {
-            $('.approve').remove();
-        } else {
+        if (status != "user") {
             $('.approve').css('display', 'block');
         }
+
+        if (status == "super") {
+            $('.user').css('display', 'block');
+        }
+        
         console.log('logged in', user.uid);
         uid = user.uid;
         $('#logout').attr('title', user.email);

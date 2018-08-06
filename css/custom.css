@@ -111,3 +111,9 @@ form img {
     top: 25%;
     right: 10px;
 }
+
+.category div{
+    display: flex; 
+    justify-content: space-between;
+    margin-bottom: 10px;
+}

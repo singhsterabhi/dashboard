@@ -1,16 +1,43 @@
 // import ImageCompressor from 'image-compressor.js';
 // import ImageCompressor from '@xkeshi/image-compressor';
 const imageCompressor = new ImageCompressor();
+let categories = 1;
 
-function cat() {
-    category = $('select[name=category]').val();
-    console.log(category);
+function addcat() {
+    categories++;
+    let elem = `<div id="cat${categories}" style="display: flex; justify-content: space-between;">
+                    <input type="text" class="form-control"  placeholder="Category">
+                    <button class="btn btn-danger" style="margin-top:0;margin-left:10px;">X</button>
+                </div>`;
+    $('.category').append(elem);
+    $(`#cat${categories} button`).attr('onclick',`removecat('cat${categories}')`);
+    // this function is to add new categories
+    // the button is to delete an added category
+}
 
-    if (category == 'instagramhotspots') {
-        $('#paired').css('display', 'block');
-    } else {
-        $('#paired').css('display', 'none');
-    }
+function removecat(c){
+    console.log(c);
+    categories--;
+    $(`#${c}`).remove();
+}
+
+// this function I added just to check if I could get the values in the categories. But I'm not able to capture the values
+function cats(){
+    // var c = document.getElementsByClassName("category").getElementsByTagName("input");
+    let c= $('.category').find('input');
+    // console.log(c.length);
+    console.log(c);
+    c.each(()=>{
+        console.log(this);
+        console.log($(this).val());
+    });
+    
+    // $(`.category`).children('span').each((e)=>{
+    //     console.log(e);
+    //     console.log($(this).attr('class'));
+    //     $(this).css('background-color','green');
+    // })
+    // console.log(categories);
 }
 
 function addAPlace() {
@@ -21,11 +48,10 @@ function addAPlace() {
         website = $('#website').val();
         geourl = $('#geourl').val();
         geolabel = $('#geolabel').val();
-        category = $('select[name=category]').val();
         city = $('#city').val();
         images = document.getElementById('images').files;
         console.log(images);
-        
+
         var citycategory = city + '_' + category;
 
         var data = {
@@ -70,7 +96,7 @@ function addAPlace() {
                         // console.log(element);
                         var imgFile = images[i];
                         console.log(imgFile);
-                        
+
                         var name = uuidv4();
                         i++;
                         imageCompressor.compress(imgFile, 0.2)
