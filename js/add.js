@@ -1,44 +1,41 @@
 // import ImageCompressor from 'image-compressor.js';
 // import ImageCompressor from '@xkeshi/image-compressor';
 const imageCompressor = new ImageCompressor();
-let categories = 1;
 
-function addcat() {
-    categories++;
-    let elem = `<div id="cat${categories}" style="display: flex; justify-content: space-between;">
-                    <input type="text" class="form-control"  placeholder="Category">
-                    <button class="btn btn-danger" style="margin-top:0;margin-left:10px;">X</button>
-                </div>`;
-    $('.category').append(elem);
-    $(`#cat${categories} button`).attr('onclick',`removecat('cat${categories}')`);
-    // this function is to add new categories
-    // the button is to delete an added category
-}
+let categs = [];
 
-function removecat(c){
-    console.log(c);
-    categories--;
-    $(`#${c}`).remove();
-}
+$(document).ready(() => {
+    cats();
+});
 
-// this function I added just to check if I could get the values in the categories. But I'm not able to capture the values
-function cats(){
-    // var c = document.getElementsByClassName("category").getElementsByTagName("input");
-    let c= $('.category').find('input');
-    // console.log(c.length);
-    console.log(c);
-    c.each(()=>{
-        console.log(this);
-        console.log($(this).val());
+function cats() {
+    categories.once('value', (snapshot) => {
+        snapshot.forEach(element => {
+            category.push(element.val());
+            let a = (element.val().toLowerCase()).split(' ').join('_')
+            catelem = `${catelem}<div class="inputGroup" >
+                <input id="${a}" name="${a}" type="checkbox" onclick="cat('${a}')"/>
+                <label for="${a}" >${element.val()}</label>
+            </div>`;
+        });
+    }).then(() => {
+        console.log(catelem);
+        $('.form').append(catelem);
     });
-    
-    // $(`.category`).children('span').each((e)=>{
-    //     console.log(e);
-    //     console.log($(this).attr('class'));
-    //     $(this).css('background-color','green');
-    // })
-    // console.log(categories);
 }
+
+function cat(c) {
+    console.log(c);
+    console.log($(`#${c}`).prop('checked'));
+
+    if ($(`#${c}`).prop('checked')) {
+        categs.push(c);
+    } else {
+        categs.splice(categs.indexOf(c), 1);
+    }
+    console.log(categs);
+}
+
 
 function addAPlace() {
     let promise = new Promise(function (resolve, reject) {
@@ -52,104 +49,104 @@ function addAPlace() {
         images = document.getElementById('images').files;
         console.log(images);
 
-        var citycategory = city + '_' + category;
-
         var data = {
             user: uid,
-            category: category,
+            category: categs,
             city: city,
-            citycategory: citycategory,
             description: description,
             geourl: geourl,
             geolabel: geolabel,
             name: name,
             url: website
         };
-
-
-        if (category == 'instagramhotspots') {
-            pairedcolor = $('#pairedcolor').val();
-            data[pairedcolor] = pairedcolor;
+        for (let t = 0; t < categs.length; t++) {
+            data[`${city}_${categs[t]}`] = true;
         }
 
+
         var i = 0;
-        var pushedPlace = db.push().key;
-        db.child(pushedPlace).update(data)
-            .then(function () {
-                $('#submit').attr('disabled', '');
-                $('#loader').css('display', 'block');
-                if (uid == 'g8AntULTJcWcqTSbS3gSMoBslHw2')
-                    db.child(pushedPlace + '/approved').set(true);
-                else
-                    db.child(pushedPlace + '/approved').set(false);
+        if (name != '' && description != '' && website != '' && geourl != '' && geolabel != '' && city != '' && categs.length != 0 && images.length != 0) {
+            
+            var pushedPlace = db.push().key;
+            db.child(pushedPlace).update(data)
+                .then(function () {
+                    $('#submit').attr('disabled', '');
+                    $('#loader').css('display', 'block');
+                    if (status != 'user')
+                        db.child(pushedPlace + '/approved').set(true);
+                    else
+                        db.child(pushedPlace + '/approved').set(false);
 
-                function forEachPromise(items, fn) {
-                    return Array.from(items).reduce(function (promise, item) {
-                        return promise.then(function () {
-                            return fn(item);
-                        });
-                    }, Promise.resolve());
-                }
-
-                function logItem(element) {
-                    return new Promise((resolve, reject) => {
-                        // console.log(element);
-                        var imgFile = images[i];
-                        console.log(imgFile);
-
-                        var name = uuidv4();
-                        i++;
-                        imageCompressor.compress(imgFile, 0.2)
-                            .then(function (result) {
-                                return uploadImageAsPromise(result, pushedPlace, false, name, db);
-                            })
-                            .then(() => {
-                                return uploadImageAsPromise(imgFile, pushedPlace, true, name, db);
-                            })
-                            .then(() => {
-                                resolve();
-                            })
-                            .catch((err) => {
-                                // Handle the error
-                                console.log(`Error ${err}`);
+                    function forEachPromise(items, fn) {
+                        return Array.from(items).reduce(function (promise, item) {
+                            return promise.then(function () {
+                                return fn(item);
                             });
-                        // resolve(compress);
-                    });
-                }
+                        }, Promise.resolve());
+                    }
 
-                return forEachPromise(images, logItem).then(() => {
-                    console.log('all images done');
+                    function logItem(element) {
+                        return new Promise((resolve, reject) => {
+                            // console.log(element);
+                            var imgFile = images[i];
+                            console.log(imgFile);
+
+                            var name = uuidv4();
+                            i++;
+                            imageCompressor.compress(imgFile, 0.2)
+                                .then(function (result) {
+                                    return uploadImageAsPromise(result, pushedPlace, false, name, db);
+                                })
+                                .then(() => {
+                                    return uploadImageAsPromise(imgFile, pushedPlace, true, name, db);
+                                })
+                                .then(() => {
+                                    resolve();
+                                })
+                                .catch((err) => {
+                                    // Handle the error
+                                    console.log(`Error ${err}`);
+                                });
+                            // resolve(compress);
+                        });
+                    }
+
+                    return forEachPromise(images, logItem).then(() => {
+                        console.log('all images done');
+                    });
+
+                }).then(() => {
+                    var query = cities.orderByChild("title").equalTo(city);
+                    if (status != 'user')
+                        return query.once('value', function (snapshot) {
+                            console.log(snapshot.exists());
+
+                            if (snapshot.exists())
+                                console.log('exists');
+                            else {
+                                console.log("doesn't");
+                                cities.push({
+                                    title: city
+                                });
+                            }
+                        }).then(() => {
+                            return query.once("child_added", function (snapshot) {
+                                snapshot.ref.child("places").push(pushedPlace);
+                            });
+                        });
+                    else
+                        return;
+                })
+                .then(() => {
+                    console.log('Place Successfully Added');
+                    reset();
+                    resolve('Place Successfully Added');
+                }).catch((err) => {
+                    console.log(err);
                 });
-
-            }).then(() => {
-                var query = cities.orderByChild("title").equalTo(city);
-                if (uid == 'g8AntULTJcWcqTSbS3gSMoBslHw2')
-                    return query.once('value', function (snapshot) {
-                        console.log(snapshot.exists());
-
-                        if (snapshot.exists())
-                            console.log('exists');
-                        else {
-                            console.log("doesn't");
-                            cities.push({
-                                title: city
-                            });
-                        }
-                    }).then(() => {
-                        return query.once("child_added", function (snapshot) {
-                            snapshot.ref.child("places").push(pushedPlace);
-                        });
-                    });
-                else
-                    return;
-            })
-            .then(() => {
-                console.log('Place Successfully Added');
-                reset();
-                resolve('Place Successfully Added');
-            }).catch((err) => {
-                console.log(err);
-            });
+        } else {
+            alert('All fields are required');
+        }
     });
 
     promise.then(function (val) {
@@ -161,18 +158,20 @@ function addAPlace() {
 }
 
 function reset() {
+    categ=[];
+    // catelem='';
     $('#name').val('');
     $('#description').val('');
     $('#website').val('');
     $('#geourl').val('');
     $('#geolabel').val('');
-    $('#category').val('default');
     $('#images').val('');
     $('#city').val('');
-    $('#paired').val('');
-    $('#paired').css('display', 'none');
     $('#submit').removeAttr('disabled');
     $('#loader').css('display', 'none');
+    $('.form').empty();
+    // cats();
+    $('.form').append(catelem);
 }
 
 function uuidv4() {
