@@ -11,16 +11,24 @@ auth.onAuthStateChanged(function (user) {
         users.child(uid + "/status").once('value', function (snapshot) {
             console.log(snapshot.val());
             status = snapshot.val();
+        }).then(() => {
+            if (status != "user") {
+                console.log(status);
+                $('.approve').css('display', 'block');
+            }
+
+            if (status != "user" && status != 'admin') {
+                console.log(status);
+                $('.user').css('display', 'block');
+                $('.category').css('display', 'block');
+            }
+
+            if (status != 'user')
+                db = places;
+            else
+                db = placesNotApproved;
+
         });
-
-        if (status != "user") {
-            $('.approve').css('display', 'block');
-        }
-
-        if (status != "user" && status!='admin') {
-            $('.user').css('display', 'block');
-            $('.category').css('display', 'block');
-        }
 
         console.log('logged in', user.uid);
         $('#logout').attr('title', user.email);
@@ -28,21 +36,13 @@ auth.onAuthStateChanged(function (user) {
         categories.once('value', (snapshot) => {
             snapshot.forEach(element => {
                 // category.push(element.val());
-                let a = (element.val().toLowerCase()).split(' ').join('_')
+                let a = (element.val().toLowerCase()).split(' ').join('_');
                 catlist[a] = element.val();
             });
         });
-
-        if (uid != 'user')
-            db = places;
-        else
-            db = placesNotApproved;
-
         cats();
 
     } else {
-        // User is signed out.
-        // ...
         console.log('logged out');
         window.location = "/";
     }
@@ -100,7 +100,7 @@ function addAPlace() {
             url: website
         };
         for (let t = 0; t < categs.length; t++) {
-            data[`${city}_${categs[t]}`] = true;
+            data[`${city.toLowerCase().split(' ').join('_')}_${categs[t]}`] = true;
         }
 
 

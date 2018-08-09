@@ -50,20 +50,6 @@ $(document).ready(function () {
             if (user) {
                 uid = user.uid;
 
-                users.child(uid + "/status").once('value', function (snapshot) {
-                    // console.log(snapshot.val());
-                    status = snapshot.val();
-                });
-
-                if (status != "user") {
-                    $('.approve').css('display', 'block');
-                }
-
-                if (status == "super") {
-                    $('.user').css('display', 'block');
-                    $('.category').css('display', 'block');
-                }
-
                 console.log('logged in', user.uid);
                 $('#logout').attr('title', user.email);
 
@@ -75,12 +61,29 @@ $(document).ready(function () {
                     });
                 });
 
-                if (status != 'user')
-                    db = places;
-                else
-                    db = placesNotApproved;
                 cats();
-                resolve();
+                return users.child(uid + "/status").once('value', function (snapshot) {
+                    console.log(snapshot.val());
+                    status = snapshot.val();
+                }).then(() => {
+                    if (status != "user") {
+                        console.log(status);
+                        $('.approve').css('display', 'block');
+                    }
+
+                    if (status != "user" && status != 'admin') {
+                        console.log(status);
+                        $('.user').css('display', 'block');
+                        $('.category').css('display', 'block');
+                    }
+
+                    if (status != 'user')
+                        db = places;
+                    else
+                        db = placesNotApproved;
+
+                    resolve();
+                });
             } else {
                 // User is signed out.
                 // ...
@@ -92,6 +95,9 @@ $(document).ready(function () {
 
     authentication.then(() => {
         console.log(uid);
+
+        console.log(db);
+        // console.log();
 
 
         db.orderByChild("user").equalTo(uid).once('value', function (snapshot) {
@@ -111,6 +117,8 @@ $(document).ready(function () {
         });
 
     }).catch(function (err) {
+        console.log('aaa');
+
         alert(err);
     });
 
@@ -250,7 +258,7 @@ function editThePlace() {
                         city: city
                     };
                     for (let t = 0; t < categs.length; t++) {
-                        newData[`${city}_${categs[t]}`] = true;
+                        newData[`${city.toLowerCase().split(' ').join('_')}_${categs[t]}`] = true;
                     }
 
                     db.child(selectedPlace).set(newData);

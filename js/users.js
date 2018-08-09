@@ -8,22 +8,35 @@ $(document).ready(function () {
             if (user) {
                 uid = user.uid;
                 let status;
+
                 users.child(uid + "/status").once('value', function (snapshot) {
-                    // console.log(snapshot.val());
+                    console.log(snapshot.val());
                     status = snapshot.val();
+                }).then(() => {
+                    
+                    if (status != "user") {
+                        console.log(status);
+                        $('.approve').css('display', 'block');
+                    }
+
+                    if (status != "user" && status != 'admin') {
+                        console.log(status);
+                        $('.user').css('display', 'block');
+                        $('.category').css('display', 'block');
+                    }
+                    else{
+                        logout();
+                    }
+                    if (status != 'user')
+                        db = places;
+                    else
+                        db = placesNotApproved;
+
                 });
-                if (status == "user") {
-                    $('.approve').remove();
-                } else {
-                    $('.approve').css('display', 'block');
-                }
+
                 console.log('logged in', user.uid);
 
                 $('#logout').attr('title', user.email);
-                if (uid != 'user')
-                    db = places;
-                else
-                    db = placesNotApproved;
 
                 resolve();
             } else {
@@ -43,7 +56,6 @@ $(document).ready(function () {
             snapshot.forEach(function (child) {
                 // console.log(child);
                 // console.log(child.val());
-
 
                 allUsers[child.key] = child.val();
                 userId.push(child.key);

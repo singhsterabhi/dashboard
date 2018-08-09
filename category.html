@@ -24,12 +24,11 @@
     <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-storage.js"></script>
     <script type="text/javascript" src="js/firebase.js"></script>
 
-    <script src="js/image-compressor.js"></script>
-
-    <script type="text/javascript" src="js/add.js"></script>
-    <script type="text/javascript" src="js/img.js"></script>
+    <script type="text/javascript" src="js/category.js"></script>
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="css/category.css">
 
 </head>
 
@@ -56,7 +55,7 @@
                     <ul class="nav navbar-nav">
                         <h6 class="menu-title">Operations</h6>
                         <!-- /.menu-title -->
-                        <li class="active">
+                        <li class="">
                             <a href="add.html" aria-haspopup="true">
                                 <i class="menu-icon fa fa-plus"></i>Add a Place</a>
                         </li>
@@ -64,15 +63,15 @@
                             <a href="edit.html" aria-haspopup="true">
                                 <i class="menu-icon fa fa-edit"></i>Edit a Place</a>
                         </li>
-                        <li class="approve" style="display:none;">
+                        <li class="approve" style="display: none;">
                             <a href="approve.html" aria-haspopup="true">
                                 <i class="menu-icon fa fa-check"></i>Approve Places</a>
                         </li>
-                        <li class="user" style="display:none;">
+                        <li class="user" style="display: none;">
                             <a href="users.html" aria-haspopup="true">
                                 <i class="menu-icon fa fa-check"></i>User List</a>
                         </li>
-                        <li class="category" style="display:none;">
+                        <li class="category active" >
                             <a href="category.html" aria-haspopup="true">
                                 <i class="menu-icon fa fa-check"></i>Category</a>
                         </li>
@@ -90,56 +89,28 @@
         <div id="right-panel" class="right-panel">
 
             <div class="sudo-nav" align="center">
-                <h4>ADD A PLACE</h4>
+                <h4>CATEGORY</h4>
             </div>
 
             <!-- content -->
             <div class="content">
-                <form id="add" action="">
-                    <div class="form-group">
-                        <label for="name">NAME</label>
-                        <input type="text" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Enter Name">
+                <h4>Add a Category</h4>
+                <div style="display: flex; margin-bottom: 20px;">
+                    <input type="text" class='form-control' id="cat" placeholder="Add a new Category">
+                    <button class="btn btn-primary" style="margin-top:0;margin-left: 10px;" onclick="add()">Add</button>
+                </div>
+                
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="">Existing Categories</th>
+                            <th scope="col" class="">Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                    </div>
-                    <div class="form-group">
-                        <label for="description">DESCRIPTION</label>
-                        <!-- <input type="text" class="form-control" id="description" placeholder="Password"> -->
-                        <textarea class="form-control" id="description" placeholder="Enter Description" rows="2"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="website">WEBSITE</label>
-                        <input type="text" class="form-control" id="website" placeholder="Enter Website">
-
-                    </div>
-                    <div class="form-group">
-                        <label for="geourl">GEO URL</label>
-                        <input type="text" class="form-control" id="geourl" placeholder="Geo Url">
-
-                    </div>
-                    <div class="form-group">
-                        <label for="geolabel">GEO LABEL</label>
-                        <input type="text" class="form-control" id="geolabel" placeholder="Geo Label">
-
-                    </div>
-
-                    <div class="form-group">
-                        <label for="category">CATEGORY</label>
-                        <div class="form">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="city">CITY</label>
-                        <input type="text" class="form-control" id="city" placeholder="Enter City">
-                    </div>
-                    <div class="form-group">
-                        <label for="images">IMAGES</label>
-                        <input type="file" class="form-control" id="images" multiple>
-                    </div>
-                    <div id="loader" style="display: none; text-align: center;">
-                        <img src="images/loader.gif" alt="" style="width: 200px!important;height:100px!important;">
-                    </div>
-                    <button type="button" class="btn btn-primary btn-lg btn-block" onclick="addAPlace()" id="submit">SUBMIT</button>
-                </form>
+                    </tbody>
+                </table>
             </div>
             <!-- content -->
         </div>
@@ -148,6 +119,7 @@
         <!-- Right Panel -->
 
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>

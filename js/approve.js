@@ -12,40 +12,34 @@ $(document).ready(() => {
             if (user) {
                 uid = user.uid;
 
-                users.child(uid + "/status").once('value', function (snapshot) {
-                    console.log(snapshot.val());
-                    status = snapshot.val();
-                });
-
-                if (status != "user") {
-                    console.log(status);
-                    $('.approve').css('display', 'block');
-                }
-
-                if (status != "user" && status!='admin') {
-                    console.log(status);
-                    
-                    $('.user').css('display', 'block');
-                    $('.category').css('display', 'block');
-                }
-
                 console.log('logged in', user.uid);
                 $('#logout').attr('title', user.email);
 
-                categories.once('value', (snapshot) => {
-                    snapshot.forEach(element => {
-                        // category.push(element.val());
-                        let a = (element.val().toLowerCase()).split(' ').join('_')
-                        catlist[a] = element.val();
-                    });
-                });
-
-                if (status != 'user')
-                    db = places;
-                else
-                    db = placesNotApproved;
                 cats();
-                resolve();
+                return users.child(uid + "/status").once('value', function (snapshot) {
+                    console.log(snapshot.val());
+                    status = snapshot.val();
+                }).then(() => {
+                    if (status != "user") {
+                        console.log(status);
+                        $('.approve').css('display', 'block');
+                    }
+                    else{
+                        logout();
+                    }
+
+                    if (status != "user" && status != 'admin') {
+                        console.log(status);
+                        $('.user').css('display', 'block');
+                        $('.category').css('display', 'block');
+                    }
+
+                    if (status != 'user')
+                        db = places;
+                    else
+                        db = placesNotApproved;
+                    resolve();
+                });
             } else {
                 // User is signed out.
                 // ...
@@ -109,6 +103,8 @@ function cat(c) {
 
 function openPlace(arg) {
     formChanged = false;
+    $('.form').empty();
+    $('.form').append(catelem);
     console.log(arg);
     selectedPlace = arg;
     let data = allPlaces[selectedPlace];
@@ -119,7 +115,6 @@ function openPlace(arg) {
     $('#city').val(data.city);
     $('#geourl').val(data.geourl);
     $('#geolabel').val(data.geolabel);
-    // $('#category').val(data.category);
 
     let c = data.category;
     if (c != undefined)
@@ -206,16 +201,6 @@ $(document).ready(function () {
     });
 });
 
-function changetrigger() {
-    formChanged = true;
-    console.log('form changed');
-    if (($('select[name=category]').val()) == 'instagramhotspots') {
-        $('#paired').css('display', 'block');
-    } else {
-        $('#paired').css('display', 'none');
-    }
-}
-
 
 function approve() {
     $('.submit').attr('disabled', '');
@@ -226,35 +211,32 @@ function approve() {
         city = allPlaces[selectedPlace].city;
         data = allPlaces[selectedPlace];
         delete data.approved;
-    } else {
+    } else if (name != '' && description != '' && website != '' && geourl != '' && geolabel != '' && categs.length != 0) {
         details = ["name", "description", "url", "citycategory", "geourl", "geolabel"];
-        var name, description, website, geourl, category, images, geolabel, pairedcolor;
+        var name, description, website, geourl, images, geolabel;
         name = $('#name').val();
         description = $('#description').val();
         website = $('#website').val();
         geourl = $('#geourl').val();
         geolabel = $('#geolabel').val();
-        category = $('select[name=category]').val();
         city = $('#city').val();
-        images = document.getElementById('images').files;
-        var citycategory = city + '_' + category;
 
         data = {
-            category: category,
-            citycategory: citycategory,
+            category: categs,
             description: description,
             geourl: geourl,
             geolabel: geolabel,
             name: name,
             url: website,
-            images: allPlaces[selectedPlace].images
+            images: allPlaces[selectedPlace].images,
+            user: uid,
+            city: city,
+            approved: true
         };
-
-        if (category == 'instagramhotspots') {
-            pairedcolor = $('#pairedcolor').val();
-            data["pairedcolor"] = pairedcolor;
-            details.push("pairedcolor");
+        for (let t = 0; t < categs.length; t++) {
+            data[`${city.toLowerCase().split(' ').join('_')}_${categs[t]}`] = true;
         }
+        console.log(data);
     }
 
 
@@ -335,4 +317,6 @@ function reset() {
     $('#presentImages').empty();
     $('.submit').removeAttr('disabled');
     $('#loader').css('display', 'none');
+    $('.form').empty();
+    $('.form').append(catelem);
 }
