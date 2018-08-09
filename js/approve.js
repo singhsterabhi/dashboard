@@ -3,28 +3,109 @@ let place = [];
 let placesid = [];
 let selectedPlace;
 let formChanged = false;
+let categs = [];
 
 $(document).ready(() => {
 
-    placesNotApproved.once('value', function (snapshot) {
-        snapshot.forEach((child) => {
-            console.log(child.key);
-            if (child.val().approved == false) {
-                allPlaces[child.key] = child.val();
-                place.push(child.val().name);
-                placesid.push(child.key);
-                var app = '<div class="alert ' + child.key + '" id="block" onclick=openPlace("' + child.key + '")>' +
-                    '<p>' + child.val().name.toUpperCase() + '</p>' +
-                    '</div>';
-                $('#selectPlace').append(app);
+    let authentication = new Promise((resolve, reject) => {
+        auth.onAuthStateChanged(function (user) {
+            if (user) {
+                uid = user.uid;
+
+                users.child(uid + "/status").once('value', function (snapshot) {
+                    console.log(snapshot.val());
+                    status = snapshot.val();
+                });
+
+                if (status != "user") {
+                    console.log(status);
+                    $('.approve').css('display', 'block');
+                }
+
+                if (status != "user" && status!='admin') {
+                    console.log(status);
+                    
+                    $('.user').css('display', 'block');
+                    $('.category').css('display', 'block');
+                }
+
+                console.log('logged in', user.uid);
+                $('#logout').attr('title', user.email);
+
+                categories.once('value', (snapshot) => {
+                    snapshot.forEach(element => {
+                        // category.push(element.val());
+                        let a = (element.val().toLowerCase()).split(' ').join('_')
+                        catlist[a] = element.val();
+                    });
+                });
+
+                if (status != 'user')
+                    db = places;
+                else
+                    db = placesNotApproved;
+                cats();
+                resolve();
+            } else {
+                // User is signed out.
+                // ...
+                // console.log('logged out');
+                window.location = "/";
             }
         });
-    }).then(() => {
-        console.log(allPlaces);
+    });
+
+    authentication.then(() => {
+        placesNotApproved.once('value', function (snapshot) {
+            snapshot.forEach((child) => {
+                console.log(child.key);
+                if (child.val().approved == false) {
+                    allPlaces[child.key] = child.val();
+                    place.push(child.val().name);
+                    placesid.push(child.key);
+                    var app = '<div class="alert ' + child.key + '" id="block" onclick=openPlace("' + child.key + '")>' +
+                        '<p>' + child.val().name.toUpperCase() + '</p>' +
+                        '</div>';
+                    $('#selectPlace').append(app);
+                }
+            });
+        }).then(() => {
+            console.log(allPlaces);
+        });
+    }).catch(function (err) {
+        alert(err);
     });
 
 });
 
+function cats() {
+    categories.once('value', (snapshot) => {
+        snapshot.forEach(element => {
+            category.push(element.val());
+            let a = (element.val().toLowerCase()).split(' ').join('_')
+            catelem = `${catelem}<div class="inputGroup" >
+                <input id="${a}" name="${a}" type="checkbox" onclick="cat('${a}')"/>
+                <label for="${a}" >${element.val()}</label>
+            </div>`;
+        });
+    }).then(() => {
+        console.log(catelem);
+        $('.form').append(catelem);
+    });
+}
+
+function cat(c) {
+    formChanged = true;
+    console.log(c);
+    console.log($(`#${c}`).prop('checked'));
+
+    if ($(`#${c}`).prop('checked')) {
+        categs.push(c);
+    } else {
+        categs.splice(categs.indexOf(c), 1);
+    }
+    console.log(categs);
+}
 
 function openPlace(arg) {
     formChanged = false;
@@ -38,14 +119,15 @@ function openPlace(arg) {
     $('#city').val(data.city);
     $('#geourl').val(data.geourl);
     $('#geolabel').val(data.geolabel);
-    $('#category').val(data.category);
+    // $('#category').val(data.category);
 
-    if (category == 'instagramhotspots') {
-        $('#paired').css('display', 'block');
-        $('#pairedcolor').val(data.pairedcolor);
-    } else {
-        $('#paired').css('display', 'none');
-    }
+    let c = data.category;
+    if (c != undefined)
+        for (let t = 0; t < c.length; t++) {
+            $(`#${c[t]}`).prop('checked', 'true');
+            categs.push(c[t]);
+        }
+
     console.log(Object.keys(data.images.lowres).length);
     $('#presentImages').empty();
     let presentImages = "";

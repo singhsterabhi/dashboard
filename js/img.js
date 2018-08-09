@@ -1,5 +1,5 @@
 // let uid;
-let db;
+// let db;
 
 function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes, name, database) {
     return new Promise(function (resolve, reject) {
@@ -36,6 +36,8 @@ function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes, name, database
                 if (highRes) {
                     database.child(pushedPlaceKey).child("images").child("highres").push(data);
                 } else {
+                    console.log(database);
+                    
                     database.child(pushedPlaceKey).child("images").child("lowres").push(data);
                 }
                 resolve();
@@ -45,34 +47,3 @@ function uploadImageAsPromise(imageFile, pushedPlaceKey, highRes, name, database
 }
 
 
-auth.onAuthStateChanged(function (user) {
-    if (user) {
-        uid = user.uid;
-        let status;
-        users.child(uid + "/status").once('value', function (snapshot) {
-            // console.log(snapshot.val());
-            status = snapshot.val();
-        });
-
-        if (status != "user") {
-            $('.approve').css('display', 'block');
-        }
-
-        if (status == "super") {
-            $('.user').css('display', 'block');
-        }
-        
-        console.log('logged in', user.uid);
-        uid = user.uid;
-        $('#logout').attr('title', user.email);
-        if (uid != 'user')
-            db = places;
-        else
-            db = placesNotApproved;
-    } else {
-        // User is signed out.
-        // ...
-        console.log('logged out');
-        window.location = "/";
-    }
-});

@@ -32,10 +32,14 @@ let places = database.ref('places');
 let cities = database.ref('cities');
 let placesNotApproved = database.ref('placessubmitted');
 let users = database.ref('users');
+let categories = database.ref('categories');
 let uid = '';
 
-let category = ['coworkingspaces', 'instagramspots', 'cafes'];
-
+let category = [];
+let catelem = ``;
+let status;
+let catlist = {};
+let db;
 
 function logout() {
     firebase.auth().signOut().then(function () {
@@ -47,6 +51,3 @@ function logout() {
         console.log('error');
     });
 }
-
-
-// g8AntULTJcWcqTSbS3gSMoBslHw2

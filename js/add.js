@@ -4,8 +4,48 @@ const imageCompressor = new ImageCompressor();
 
 let categs = [];
 
-$(document).ready(() => {
-    cats();
+auth.onAuthStateChanged(function (user) {
+    if (user) {
+        uid = user.uid;
+
+        users.child(uid + "/status").once('value', function (snapshot) {
+            console.log(snapshot.val());
+            status = snapshot.val();
+        });
+
+        if (status != "user") {
+            $('.approve').css('display', 'block');
+        }
+
+        if (status != "user" && status!='admin') {
+            $('.user').css('display', 'block');
+            $('.category').css('display', 'block');
+        }
+
+        console.log('logged in', user.uid);
+        $('#logout').attr('title', user.email);
+
+        categories.once('value', (snapshot) => {
+            snapshot.forEach(element => {
+                // category.push(element.val());
+                let a = (element.val().toLowerCase()).split(' ').join('_')
+                catlist[a] = element.val();
+            });
+        });
+
+        if (uid != 'user')
+            db = places;
+        else
+            db = placesNotApproved;
+
+        cats();
+
+    } else {
+        // User is signed out.
+        // ...
+        console.log('logged out');
+        window.location = "/";
+    }
 });
 
 function cats() {
@@ -66,7 +106,7 @@ function addAPlace() {
 
         var i = 0;
         if (name != '' && description != '' && website != '' && geourl != '' && geolabel != '' && city != '' && categs.length != 0 && images.length != 0) {
-            
+
             var pushedPlace = db.push().key;
             db.child(pushedPlace).update(data)
                 .then(function () {
@@ -158,7 +198,7 @@ function addAPlace() {
 }
 
 function reset() {
-    categ=[];
+    categ = [];
     // catelem='';
     $('#name').val('');
     $('#description').val('');

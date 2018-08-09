@@ -7,7 +7,7 @@ let selectedPlace;
 let selectedCity;
 let images = {};
 let formChanged = false;
-let db;
+// let db;
 let categs = [];
 
 FileList.prototype.forEach = function (callback) {
@@ -48,6 +48,33 @@ $(document).ready(function () {
     let authentication = new Promise((resolve, reject) => {
         auth.onAuthStateChanged(function (user) {
             if (user) {
+                uid = user.uid;
+
+                users.child(uid + "/status").once('value', function (snapshot) {
+                    // console.log(snapshot.val());
+                    status = snapshot.val();
+                });
+
+                if (status != "user") {
+                    $('.approve').css('display', 'block');
+                }
+
+                if (status == "super") {
+                    $('.user').css('display', 'block');
+                    $('.category').css('display', 'block');
+                }
+
+                console.log('logged in', user.uid);
+                $('#logout').attr('title', user.email);
+
+                categories.once('value', (snapshot) => {
+                    snapshot.forEach(element => {
+                        // category.push(element.val());
+                        let a = (element.val().toLowerCase()).split(' ').join('_')
+                        catlist[a] = element.val();
+                    });
+                });
+
                 if (status != 'user')
                     db = places;
                 else
@@ -70,7 +97,7 @@ $(document).ready(function () {
         db.orderByChild("user").equalTo(uid).once('value', function (snapshot) {
 
             snapshot.forEach(function (child) {
-                console.log(child);
+                console.log(child.val());
 
                 allPlaces[child.key] = child.val();
                 place.push(child.val().name);
@@ -157,7 +184,7 @@ function openPlace(arg) {
         });
     }
 
-    if (data.images != undefined)
+    if (data.images != undefined && data.images != null)
         forEachPromise(Object.keys(data.images.lowres), logItem).then(() => {
             console.log('all images done');
             $('#presentImages').append(presentImages);
@@ -200,85 +227,93 @@ function editThePlace() {
 
 
         if (formChanged && name != '' && description != '' && website != '' && geourl != '' && geolabel != '' && categs.length != 0) {
+
             let ims = false;
+
             db.child(selectedPlace + '/images').once('value', (ss) => {
                 console.log(ss.val());
                 ims = ss.val();
-            });
+            }).then(() => {
+                console.log(ims);
+                if (ims != null || images.length != 0) {
+                    $('.submit').attr('disabled', '');
+                    $('#loader').css('display', 'block');
 
-            if (ims != null || images.length != 0) {
-                $('.submit').attr('disabled', '');
-                $('#loader').css('display', 'block');
-
-                let newData = {
-                    category: categs,
-                    description: description,
-                    geourl: geourl,
-                    geolabel: geolabel,
-                    name: name,
-                    url: website,
-                };
-                for (let t = 0; t < categs.length; t++) {
-                    newData[`${city}_${categs[t]}`] = true;
-                }
-
-                db.child(selectedPlace).set(newData);
-                db.child(selectedPlace + '/images').set(ims);
-                let i = 0;
-                db.child(selectedPlace + '/approved').set(false).then(() => {
-                    function forEachPromise(items, fn) {
-                        return Array.from(items).reduce(function (promise, item) {
-                            return promise.then(function () {
-                                return fn(item);
-                            });
-                        }, Promise.resolve());
+                    let newData = {
+                        category: categs,
+                        description: description,
+                        geourl: geourl,
+                        geolabel: geolabel,
+                        name: name,
+                        url: website,
+                        user: uid,
+                        city: city
+                    };
+                    for (let t = 0; t < categs.length; t++) {
+                        newData[`${city}_${categs[t]}`] = true;
                     }
 
-                    function logItem(element) {
-                        return new Promise((resolve, reject) => {
-                            // console.log(element);
-                            var imgFile = images[i];
-                            var name = uuidv4();
-                            i++;
-                            imageCompressor.compress(imgFile, 0.2)
-                                .then(function (result) {
-                                    return uploadImageAsPromise(result, selectedPlace, false, name);
-                                })
-                                .then(() => {
-                                    return uploadImageAsPromise(imgFile, selectedPlace, true, name);
-                                })
-                                .then(() => {
-                                    resolve();
-                                })
-                                .catch((err) => {
-                                    // Handle the error
-                                    console.log(`Error ${err}`);
+                    db.child(selectedPlace).set(newData);
+                    if (ims != null)
+                        db.child(selectedPlace + '/images').set(ims);
+                    let i = 0;
+                    db.child(selectedPlace + '/approved').set(false).then(() => {
+                        function forEachPromise(items, fn) {
+                            return Array.from(items).reduce(function (promise, item) {
+                                return promise.then(function () {
+                                    return fn(item);
                                 });
-                            // resolve(compress);
+                            }, Promise.resolve());
+                        }
+
+                        function logItem(element) {
+                            return new Promise((resolve, reject) => {
+                                // console.log(element);
+                                var imgFile = images[i];
+                                var name = uuidv4();
+                                i++;
+                                imageCompressor.compress(imgFile, 0.2)
+                                    .then(function (result) {
+                                        return uploadImageAsPromise(result, selectedPlace, false, name);
+                                    })
+                                    .then(() => {
+                                        return uploadImageAsPromise(imgFile, selectedPlace, true, name);
+                                    })
+                                    .then(() => {
+                                        resolve();
+                                    })
+                                    .catch((err) => {
+                                        // Handle the error
+                                        console.log(`Error ${err}`);
+                                    });
+                                // resolve(compress);
+                            });
+                        }
+
+                        return forEachPromise(images, logItem).then(() => {
+                            console.log('all images done');
                         });
-                    }
 
-                    return forEachPromise(images, logItem).then(() => {
-                        console.log('all images done');
+                    }).then(function () {
+                        if (status != 'user')
+                            db.child(selectedPlace + '/approved').set(true);
+                        console.log('Place Successfully Edited');
+                        // allPlaces[selectedPlace]=
+                        return db.child(selectedPlace).once('value', function (snapshot) {
+                            console.log(snapshot.val());
+                            $("." + selectedPlace + ' p').html(snapshot.val().name.toUpperCase());
+                            place[placesid.indexOf(selectedPlace)] = snapshot.val().name;
+                            allPlaces[selectedPlace] = snapshot.val();
+                        }).then(() => {
+                            resolve('Place Successfully Edited');
+                        });
+                    }).catch((err) => {
+                        console.log(err);
                     });
-
-                }).then(function () {
-                    if (uid == 'g8AntULTJcWcqTSbS3gSMoBslHw2')
-                        db.child(selectedPlace + '/approved').set(true);
-                    console.log('Place Successfully Edited');
-                    // allPlaces[selectedPlace]=
-                    return db.child(selectedPlace).once('value', function (snapshot) {
-                        console.log(snapshot.val());
-                        $("." + selectedPlace + ' p').html(snapshot.val().name.toUpperCase());
-                        place[placesid.indexOf(selectedPlace)] = snapshot.val().name;
-                        allPlaces[selectedPlace] = snapshot.val();
-                    }).then(() => {
-                        resolve('Place Successfully Edited');
-                    });
-                }).catch((err) => {
-                    console.log(err);
-                });
-            }
+                } else {
+                    alert('Add images');
+                }
+            });
 
         } else {
             alert(`Make some changes for successful edit!
@@ -446,4 +481,7 @@ function reset() {
     $('#presentImages').empty();
     $('.submit').removeAttr('disabled');
     $('#loader').css('display', 'none');
+    $('.form').empty();
+    // cats();
+    $('.form').append(catelem);
 }
