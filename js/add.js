@@ -99,13 +99,15 @@ function addAPlace() {
             name: name,
             url: website
         };
+        let z = {};
         for (let t = 0; t < categs.length; t++) {
-            data[`${city.toLowerCase().split(' ').join('_')}_${categs[t]}`] = true;
+            z[`${city.toLowerCase().split(' ').join('_')}_${categs[t]}`] = true;
         }
+        data[`${city}_tags`] = z;
 
 
         var i = 0;
-        if (name != '' && description != '' && website != '' && geourl != '' && geolabel != '' && city != '' && categs.length != 0 && images.length != 0) {
+        if (name != '' && description != '' && website != '' && geourl != '' && geolabel != '' && city != '' && images.length != 0) {
 
             var pushedPlace = db.push().key;
             db.child(pushedPlace).update(data)

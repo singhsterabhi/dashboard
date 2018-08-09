@@ -4,6 +4,7 @@ let placesid = [];
 let selectedPlace;
 let formChanged = false;
 let categs = [];
+let spuid = "";
 
 $(document).ready(() => {
 
@@ -23,8 +24,7 @@ $(document).ready(() => {
                     if (status != "user") {
                         console.log(status);
                         $('.approve').css('display', 'block');
-                    }
-                    else{
+                    } else {
                         logout();
                     }
 
@@ -115,7 +115,7 @@ function openPlace(arg) {
     $('#city').val(data.city);
     $('#geourl').val(data.geourl);
     $('#geolabel').val(data.geolabel);
-
+    spuid = data.user;
     let c = data.category;
     if (c != undefined)
         for (let t = 0; t < c.length; t++) {
@@ -163,11 +163,12 @@ function openPlace(arg) {
             });
         });
     }
-
-    forEachPromise(Object.keys(data.images.lowres), logItem).then(() => {
-        console.log('all images done');
-        $('#presentImages').append(presentImages);
-    });
+    
+    if (data.images != undefined && data.images != null)
+        forEachPromise(Object.keys(data.images.lowres), logItem).then(() => {
+            console.log('all images done');
+            $('#presentImages').append(presentImages);
+        });
 }
 
 
@@ -211,7 +212,7 @@ function approve() {
         city = allPlaces[selectedPlace].city;
         data = allPlaces[selectedPlace];
         delete data.approved;
-    } else if (name != '' && description != '' && website != '' && geourl != '' && geolabel != '' && categs.length != 0) {
+    } else if (name != '' && description != '' && website != '' && geourl != '' && geolabel != '') {
         details = ["name", "description", "url", "citycategory", "geourl", "geolabel"];
         var name, description, website, geourl, images, geolabel;
         name = $('#name').val();
@@ -229,13 +230,15 @@ function approve() {
             name: name,
             url: website,
             images: allPlaces[selectedPlace].images,
-            user: uid,
+            user: spuid,
             city: city,
             approved: true
         };
+        let z = {};
         for (let t = 0; t < categs.length; t++) {
-            data[`${city.toLowerCase().split(' ').join('_')}_${categs[t]}`] = true;
+            z[`${city.toLowerCase().split(' ').join('_')}_${categs[t]}`] = true;
         }
+        data[`${city}_tags`] = z;
         console.log(data);
     }
 

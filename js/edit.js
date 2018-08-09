@@ -9,6 +9,7 @@ let images = {};
 let formChanged = false;
 // let db;
 let categs = [];
+let spuid = "";
 
 FileList.prototype.forEach = function (callback) {
     [].forEach.call(this, callback)
@@ -99,22 +100,38 @@ $(document).ready(function () {
         console.log(db);
         // console.log();
 
+        if (status == "super")
+            db.once('value', function (snapshot) {
 
-        db.orderByChild("user").equalTo(uid).once('value', function (snapshot) {
+                snapshot.forEach(function (child) {
+                    console.log(child.val());
 
-            snapshot.forEach(function (child) {
-                console.log(child.val());
+                    allPlaces[child.key] = child.val();
+                    place.push(child.val().name);
+                    placesid.push(child.key);
 
-                allPlaces[child.key] = child.val();
-                place.push(child.val().name);
-                placesid.push(child.key);
-
-                var app = '<div class="alert ' + child.key + '" id="block" onclick=openPlace("' + child.key + '")>' +
-                    '<p>' + child.val().name.toUpperCase() + '</p>' +
-                    '</div>';
-                $('#selectPlace').append(app);
+                    var app = '<div class="alert ' + child.key + '" id="block" onclick=openPlace("' + child.key + '")>' +
+                        '<p>' + child.val().name.toUpperCase() + '</p>' +
+                        '</div>';
+                    $('#selectPlace').append(app);
+                });
             });
-        });
+        else
+            db.orderByChild("user").equalTo(uid).once('value', function (snapshot) {
+
+                snapshot.forEach(function (child) {
+                    console.log(child.val());
+
+                    allPlaces[child.key] = child.val();
+                    place.push(child.val().name);
+                    placesid.push(child.key);
+
+                    var app = '<div class="alert ' + child.key + '" id="block" onclick=openPlace("' + child.key + '")>' +
+                        '<p>' + child.val().name.toUpperCase() + '</p>' +
+                        '</div>';
+                    $('#selectPlace').append(app);
+                });
+            });
 
     }).catch(function (err) {
         console.log('aaa');
@@ -234,7 +251,7 @@ function editThePlace() {
         images = document.getElementById('images').files;
 
 
-        if (formChanged && name != '' && description != '' && website != '' && geourl != '' && geolabel != '' && categs.length != 0) {
+        if (formChanged && name != '' && description != '' && website != '' && geourl != '' && geolabel != '' ) {
 
             let ims = false;
 
@@ -255,11 +272,13 @@ function editThePlace() {
                         name: name,
                         url: website,
                         user: uid,
-                        city: city
+                        city: city,
                     };
+                    let z={};
                     for (let t = 0; t < categs.length; t++) {
-                        newData[`${city.toLowerCase().split(' ').join('_')}_${categs[t]}`] = true;
+                        z[`${city.toLowerCase().split(' ').join('_')}_${categs[t]}`] = true;
                     }
+                    newData[`${city}_tags`]=z;
 
                     db.child(selectedPlace).set(newData);
                     if (ims != null)
